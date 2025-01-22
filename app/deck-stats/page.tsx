@@ -18,6 +18,7 @@ import {
     YAxis
 } from 'recharts';
 import { CustomCard } from '../components/card';
+import GoogleAd from '../components/GoogleAd';
 
 
 interface PokemonImage {
@@ -264,6 +265,10 @@ const DeckStatsPage = () => {
           </h1>
         </div>
 
+        <div className="my-8">
+          <GoogleAd />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <CustomCard title="Most Played Decks" className="bg-white/50 backdrop-blur-sm">
             <div className="space-y-2">
@@ -294,6 +299,10 @@ const DeckStatsPage = () => {
                 ))}
             </div>
           </CustomCard>
+        </div>
+
+        <div className="my-8">
+          <GoogleAd />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

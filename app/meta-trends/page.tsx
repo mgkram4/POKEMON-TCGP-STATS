@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { FaChartLine } from 'react-icons/fa';
+import { FaCrown } from 'react-icons/fa';
 import {
     Area,
     AreaChart,
@@ -16,6 +16,7 @@ import {
     YAxis
 } from 'recharts';
 import { CustomCard } from '../components/card';
+import GoogleAd from '../components/GoogleAd';
 
 interface TrendData {
   date: string;
@@ -120,10 +121,14 @@ const MetaTrendsPage = () => {
         className="max-w-7xl mx-auto space-y-8"
       >
         <div className="flex items-center gap-4">
-          <FaChartLine className="text-4xl text-blue-500" />
+          <FaCrown className="text-4xl text-yellow-500" />
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Meta Trends
           </h1>
+        </div>
+
+        <div className="my-8">
+          <GoogleAd />
         </div>
 
         <div className="grid grid-cols-1 gap-6">
@@ -235,6 +240,18 @@ const MetaTrendsPage = () => {
               </div>
             </div>
           </CustomCard>
+        </div>
+
+        <div className="my-8">
+          <GoogleAd />
+        </div>
+
+        <div className="my-8">
+          <GoogleAd />
+        </div>
+
+        <div className="my-8">
+          <GoogleAd />
         </div>
       </motion.div>
     </div>

@@ -4,8 +4,9 @@ import { ResponsiveChord } from '@nivo/chord';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { FaChartLine } from 'react-icons/fa';
+import { FaCrown } from 'react-icons/fa';
 import { CustomCard } from '../components/card';
+import GoogleAd from '../components/GoogleAd';
 
 interface MatchupData {
   deck1: string;
@@ -183,10 +184,14 @@ const MatchupsPage = () => {
         className="max-w-7xl mx-auto space-y-8"
       >
         <div className="flex items-center gap-4">
-          <FaChartLine className="text-4xl text-blue-500" />
+          <FaCrown className="text-4xl text-yellow-500" />
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Matchup Analysis
           </h1>
+        </div>
+
+        <div className="my-8">
+          <GoogleAd />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -281,6 +286,10 @@ const MatchupsPage = () => {
               </div>
             </CustomCard>
           </motion.div>
+        </div>
+
+        <div className="my-8">
+          <GoogleAd />
         </div>
       </motion.div>
     </div>

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { FaBolt, FaBrain, FaCrown, FaFire, FaFish, FaLeaf, FaWater } from 'react-icons/fa';
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CustomCard } from './components/card';
+import GoogleAd from './components/GoogleAd';
 
 // Pokémon TCG Theme Colors
 type TierType = 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
@@ -360,12 +361,22 @@ const PokemonTierDashboard = () => {
           </CustomCard>
         </div>
 
+        {/* First Ad Placement - After Meta Overview */}
+        <div className="my-8">
+          <GoogleAd />
+        </div>
+
         {/* Tier Lists */}
         {Object.entries(tierData).map(([tier, decks]) => 
           decks.length > 0 && (
             <TierList key={tier} tier={tier as TierType} decks={decks} />
           )
         )}
+
+        {/* Second Ad Placement - Before Charts */}
+        <div className="my-8">
+          <GoogleAd />
+        </div>
 
         {/* Performance Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -457,7 +468,12 @@ const PokemonTierDashboard = () => {
           </CustomCard>
         </div>
 
-        {/* Matchup Analysis */}
+        {/* Third Ad Placement - Before Key Insights */}
+        <div className="my-8">
+          <GoogleAd />
+        </div>
+
+        {/* Key Insights */}
         <CustomCard title="Key Insights" className="bg-white/50 backdrop-blur-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="space-y-2">

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from 'next/script';
+import GoogleAd from './components/GoogleAd';
 import Navigation from './components/navigation';
 import "./globals.css";
 
@@ -41,6 +43,9 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "TCGP Pocket",
   },
+  other: {
+    "google-adsense-account": "ca-pub-1233511905544381"
+  }
 };
 
 export default function RootLayout({
@@ -50,9 +55,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1233511905544381"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <GoogleAd />
         <Navigation />
         {children}
       </body>
