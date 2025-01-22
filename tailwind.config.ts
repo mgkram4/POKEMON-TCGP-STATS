@@ -50,6 +50,23 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        pokemon: {
+          psychic: '#9C27B0',
+          water: '#2196F3',
+          grass: '#4CAF50',
+          electric: '#FDD835',
+          fire: '#FF9800',
+          fighting: '#795548',
+          normal: '#9E9E9E'
+        },
+        tier: {
+          s: '#2E7D32',
+          a: '#4CAF50',
+          b: '#8BC34A',
+          c: '#FDD835',
+          d: '#FF9800',
+          f: '#F44336'
+        }
       },
       borderRadius: {
         lg: "var(--radius)",

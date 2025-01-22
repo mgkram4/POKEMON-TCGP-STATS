@@ -1,192 +1,488 @@
-'use client';
+"use client"
 
-import _ from 'lodash';
-import Papa from 'papaparse';
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { FaBolt, FaBrain, FaCrown, FaFire, FaFish, FaLeaf, FaWater } from 'react-icons/fa';
+import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { CustomCard } from './components/card';
 
-interface MatchData {
-  deck1: string;
-  deck2: string;
-  wins: number;
-  losses: number;
-  ties: number;
-  total: number;
-  win_rate: number;
-}
+// Pokémon TCG Theme Colors
+type TierType = 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
 
+const colors: Record<TierType, string> = {
+  S: '#2E7D32', // Dark Green
+  A: '#4CAF50', // Green
+  B: '#8BC34A', // Light Green
+  C: '#FDD835', // Yellow
+  D: '#FF9800', // Orange
+  F: '#F44336'  // Red
+};
+
+const typeColors = {
+
+  psychic: '#9C27B0',
+  water: '#2196F3',
+  grass: '#4CAF50',
+  electric: '#FDD835',
+  fire: '#FF9800',
+  fighting: '#795548',
+  normal: '#9E9E9E'
+};
+
+const typeIcons: Record<string, TypeIcon> = {
+  'mewtwo-ex': { icon: FaBrain, color: typeColors.psychic },
+  'gyarados-ex': { icon: FaWater, color: typeColors.water },
+  'exeggutor-ex': { icon: FaLeaf, color: typeColors.grass },
+  'pikachu-ex': { icon: FaBolt, color: typeColors.electric },
+  'charizard-ex': { icon: FaFire, color: typeColors.fire },
+  'aerodactyl-ex': { icon: FaFish, color: typeColors.fighting }
+};
+
+// Add interfaces for the data structures
 interface DeckStats {
   deck: string;
-  totalGames: number;
-  wins: number;
-  losses: number;
-  winRate: number;
-}
-
-interface ChartData {
-  deck: string;
-  totalGames: number;
   winRate: string;
+  metaShare: string;
+  totalGames: number;
+  favorableMatchups: number;
+  performanceScore: string;
 }
 
-export default function Page() {
-  const [data, setData] = useState<ChartData[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface TypeIcon {
+  icon: React.ElementType;
+  color: string;
+}
+
+interface PokemonImage {
+  name: string;
+  imageUrl: string;
+}
+
+interface TierCardProps {
+  deck: string;
+  stats: DeckStats;
+  tier: TierType;
+}
+
+interface TierListProps {
+  tier: TierType;
+  decks: DeckStats[];
+}
+
+// Simplified color mappings using Tailwind classes
+const getTierColorClass = (tier: TierType): string => ({
+  'S': 'text-tier-s',
+  'A': 'text-tier-a',
+  'B': 'text-tier-b',
+  'C': 'text-tier-c',
+  'D': 'text-tier-d',
+  'F': 'text-tier-f'
+}[tier]);
+
+const getPokemonNameForApi = (deckName: string): string => {
+  // Convert to lowercase and remove special characters
+  const normalized = deckName.toLowerCase().replace(/[^a-z0-9-]/g, '');
+  
+  // Special case mappings
+  const specialCases: Record<string, string> = {
+    'charizardexarcanine': 'charizard',
+    'charizardexmoltres': 'charizard',
+    'arcanineex': 'arcanine',
+    'serperiorexeggutor': 'serperior',
+    'golemdruddigon': 'golem',
+    'scolipede': 'scolipede',
+    'greninja': 'greninja',
+    'celebiex': 'celebi',
+    'mewtwoex': 'mewtwo',
+    'gyaradosex': 'gyarados',
+    'exeggutorex': 'exeggutor',
+    'pikachuex': 'pikachu',
+    'aerodactylex': 'aerodactyl'
+  };
+
+  // Find the matching key in specialCases
+  const matchingKey = Object.keys(specialCases).find(key => 
+    normalized.includes(key)
+  );
+
+  return matchingKey ? specialCases[matchingKey] : normalized.split('-')[0];
+};
+
+const getPokemonImage = async (pokemonName: string): Promise<PokemonImage | null> => {
+  try {
+    const apiName = getPokemonNameForApi(pokemonName);
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`);
+    const data = await response.json();
+    return {
+      name: pokemonName,
+      imageUrl: data.sprites.other['official-artwork'].front_default || data.sprites.front_default
+    };
+  } catch (error) {
+    console.error(`Error fetching Pokemon image for ${pokemonName}:`, error);
+    return null;
+  }
+};
+
+const TierCard = ({ deck, stats, tier }: TierCardProps) => {
+  const [pokemonImage, setPokemonImage] = useState<PokemonImage | null>(null);
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const response = await fetch('/trainerhill-meta-matchups-2025-01-21.csv');
-        const csvText = await response.text();
-        const parsed = Papa.parse<MatchData>(csvText, {
-          header: true,
-          skipEmptyLines: true,
-          dynamicTyping: true
-        });
+    const loadPokemonImage = async () => {
+      const image = await getPokemonImage(deck);
+      setPokemonImage(image);
+    };
+    loadPokemonImage();
+  }, [deck]);
 
-        // Get unique decks
-        const decks = _.uniq([..._.map(parsed.data, 'deck1'), ..._.map(parsed.data, 'deck2')]);
-        
-        // Calculate stats for each deck
-        const deckStats = decks.map(deck => {
-          const asPlayer1 = parsed.data.filter(row => row.deck1 === deck);
-          const asPlayer2 = parsed.data.filter(row => row.deck2 === deck);
-          
-          const wins = _.sumBy(asPlayer1, 'wins') + _.sumBy(asPlayer2, 'losses');
-          const losses = _.sumBy(asPlayer1, 'losses') + _.sumBy(asPlayer2, 'wins');
-          const totalGames = wins + losses;
-          
-          if (totalGames < 100) return null; // Filter out decks with few games
-          
-          return {
-            deck: deck.split('-').slice(0, 3).join('-'),
-            totalGames,
-            wins,
-            losses,
-            winRate: (wins / totalGames * 100)
-          };
-        }).filter((deck): deck is DeckStats => deck !== null);
-
-        // Sort by total games and take top 10
-        const sortedData = _.orderBy(deckStats, ['totalGames'], ['desc'])
-          .slice(0, 10)
-          .map(deck => ({
-            deck: deck.deck,
-            totalGames: deck.totalGames,
-            winRate: deck.winRate.toFixed(1)
-          }));
-
-        setData(sortedData);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error loading data:', error);
-        setError('Failed to load Pokemon TCG data');
-        setIsLoading(false);
-      }
-    }
-
-    loadData();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
-  }
-
-  if (error || !data) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-red-500 text-xl">{error || 'Failed to load data'}</div>
-      </div>
-    );
-  }
-
-  const totalGamesPlayed = _.sumBy(data, 'totalGames');
-  const topDeck = _.maxBy(data, 'totalGames');
-  const highestWinRate = _.maxBy(data, deck => parseFloat(deck.winRate));
+  const getDeckIcon = () => {
+    const deckBase = Object.keys(typeIcons).find(key => deck.toLowerCase().includes(key));
+    const iconData = deckBase ? typeIcons[deckBase] : { icon: FaCrown, color: typeColors.normal };
+    const Icon = iconData.icon;
+    return <Icon className={`text-xl text-pokemon-${iconData.color.split('.').pop()}`} />;
+  };
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8">Pokemon TCG Meta Analysis</h1>
-        
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-gray-500 text-sm font-medium">Total Games Analyzed</h3>
-            <p className="text-2xl font-bold mt-2">{totalGamesPlayed.toLocaleString()}</p>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full"
+    >
+      <div className="p-4 rounded-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+        <div className="flex items-center justify-between pb-2">
+          <div className="flex items-center gap-2 text-sm font-medium">
+            {pokemonImage ? (
+              <img 
+                src={pokemonImage.imageUrl} 
+                alt={pokemonImage.name}
+                className="w-12 h-12 object-contain"
+              />
+            ) : (
+              getDeckIcon()
+            )}
+            {deck}
           </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-gray-500 text-sm font-medium">Most Popular Deck</h3>
-            <p className="text-2xl font-bold mt-2">{topDeck?.deck}</p>
-            <p className="text-sm text-gray-500 mt-1">
-              {((topDeck?.totalGames || 0) / totalGamesPlayed * 100).toFixed(1)}% of meta
-            </p>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-gray-500 text-sm font-medium">Highest Win Rate</h3>
-            <p className="text-2xl font-bold mt-2">{highestWinRate?.deck}</p>
-            <p className="text-sm text-gray-500 mt-1">{highestWinRate?.winRate}% win rate</p>
-          </div>
-        </div>
-
-        {/* Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
-          <h2 className="text-xl font-semibold mb-4">Top Decks by Games Played</h2>
-          <div className="h-96">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="deck" 
-                  angle={-45} 
-                  textAnchor="end" 
-                  height={80} 
-                  interval={0}
-                />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="totalGames" fill="#3b82f6" name="Total Games" />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className={`px-2 py-1 rounded text-xs font-bold ${getTierColorClass(tier)}`}>
+            Tier {tier}
           </div>
         </div>
-
-        {/* Data Table */}
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">Deck Statistics</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="text-left p-4 font-medium">Deck</th>
-                  <th className="text-right p-4 font-medium">Games Played</th>
-                  <th className="text-right p-4 font-medium">Win Rate</th>
-                  <th className="text-right p-4 font-medium">Meta Share</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map(deck => (
-                  <tr key={deck.deck} className="border-t hover:bg-gray-50">
-                    <td className="p-4">{deck.deck}</td>
-                    <td className="text-right p-4">{deck.totalGames.toLocaleString()}</td>
-                    <td className="text-right p-4">{deck.winRate}%</td>
-                    <td className="text-right p-4">
-                      {((deck.totalGames / totalGamesPlayed) * 100).toFixed(1)}%
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="grid grid-cols-2 gap-4">
+          {[
+            { label: 'Win Rate', value: `${stats.winRate}%` },
+            { label: 'Meta Share', value: `${stats.metaShare}%` },
+            { label: 'Games Played', value: stats.totalGames.toLocaleString() },
+            { label: 'Favorable Matchups', value: stats.favorableMatchups }
+          ].map(({ label, value }) => (
+            <div key={label}>
+              <p className="text-xs text-gray-500">{label}</p>
+              <p className="text-lg font-bold">{value}</p>
+            </div>
+          ))}
         </div>
       </div>
-    </main>
+    </motion.div>
   );
-}
+};
+
+const TierList = ({ tier, decks }: TierListProps) => {
+  return (
+    <motion.div
+      key={tier}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.2 }}
+      className="space-y-4"
+    >
+      <h2 className={`text-2xl font-bold ${getTierColorClass(tier)}`}>
+        Tier {tier}
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {decks.map((deck) => (
+          <TierCard
+            key={deck.deck}
+            deck={deck.deck}
+            stats={deck}
+            tier={tier}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+};
+
+const PokemonTierDashboard = () => {
+  const tierData: Record<TierType, DeckStats[]> = {
+    "S": [{
+      deck: "Mewtwo-EX",
+      winRate: "47.8",
+      metaShare: "52.4",
+      totalGames: 40698,
+      favorableMatchups: 7,
+      performanceScore: "58.8"
+    }],
+    "A": [
+      {
+        deck: "Gyarados-EX",
+        winRate: "48.6",
+        metaShare: "37.8",
+        totalGames: 29388,
+        favorableMatchups: 7,
+        performanceScore: "54.8"
+      },
+      {
+        deck: "Exeggutor-EX",
+        winRate: "48.8",
+        metaShare: "16.6",
+        totalGames: 12924,
+        favorableMatchups: 8,
+        performanceScore: "50.5"
+      }
+    ],
+    "B": [
+      {
+        deck: "Pikachu-EX",
+        winRate: "48.1",
+        metaShare: "27.3",
+        totalGames: 21232,
+        favorableMatchups: 5,
+        performanceScore: "47.4"
+      },
+      {
+        deck: "Aerodactyl-EX",
+        winRate: "46.7",
+        metaShare: "8.6",
+        totalGames: 6666,
+        favorableMatchups: 7,
+        performanceScore: "41.9"
+      },
+      {
+        deck: "Celebi-EX",
+        winRate: "43.3",
+        metaShare: "11.6",
+        totalGames: 9036,
+        favorableMatchups: 6,
+        performanceScore: "41.8"
+      }
+    ],
+    "C": [
+      {
+        deck: "Charizard-EX/Arcanine",
+        winRate: "49.6",
+        metaShare: "7.7",
+        totalGames: 6014,
+        favorableMatchups: 6,
+        performanceScore: "40.2"
+      },
+      {
+        deck: "Charizard-EX/Moltres",
+        winRate: "45.1",
+        metaShare: "8.8",
+        totalGames: 6876,
+        favorableMatchups: 5,
+        performanceScore: "37.6"
+      }
+    ],
+    "D": [
+      {
+        deck: "Arcanine-EX",
+        winRate: "47.8",
+        metaShare: "4.9",
+        totalGames: 3810,
+        favorableMatchups: 4,
+        performanceScore: "32.4"
+      },
+      {
+        deck: "Greninja",
+        winRate: "46.6",
+        metaShare: "4.0",
+        totalGames: 3126,
+        favorableMatchups: 3,
+        performanceScore: "29.0"
+      }
+    ],
+    "F": [
+      {
+        deck: "Serperior-Exeggutor",
+        winRate: "49.3",
+        metaShare: "2.9",
+        totalGames: 2242,
+        favorableMatchups: 1,
+        performanceScore: "24.8"
+      },
+      {
+        deck: "Golem-Druddigon",
+        winRate: "40.3",
+        metaShare: "5.4",
+        totalGames: 4170,
+        favorableMatchups: 1,
+        performanceScore: "23.9"
+      },
+      {
+        deck: "Scolipede",
+        winRate: "41.5",
+        metaShare: "3.6",
+        totalGames: 2792,
+        favorableMatchups: 1,
+        performanceScore: "22.5"
+      }
+    ]
+  };
+
+  return (
+    <div className="min-h-screen p-6 bg-gradient-to-br from-blue-50 to-indigo-50">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-7xl mx-auto space-y-8"
+      >
+        <div className="flex items-center gap-4">
+          <FaCrown className="text-4xl text-yellow-500" />
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Pokémon TCG Meta Analysis
+          </h1>
+        </div>
+
+        {/* Meta Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <CustomCard title="Total Games" className="bg-white/50 backdrop-blur-sm">
+            <div className="text-3xl font-bold">155,460</div>
+          </CustomCard>
+          <CustomCard title="Average Win Rate" className="bg-white/50 backdrop-blur-sm">
+            <div className="text-3xl font-bold">46.52%</div>
+          </CustomCard>
+          <CustomCard title="Top Performer" className="bg-white/50 backdrop-blur-sm">
+            <div className="text-3xl font-bold">Mewtwo-EX</div>
+            <div className="text-sm text-gray-500">58.8 Performance Score</div>
+          </CustomCard>
+          <CustomCard title="Meta Diversity" className="bg-white/50 backdrop-blur-sm">
+            <div className="text-3xl font-bold">15 Decks</div>
+            <div className="text-sm text-gray-500">Across 6 Tiers</div>
+          </CustomCard>
+        </div>
+
+        {/* Tier Lists */}
+        {Object.entries(tierData).map(([tier, decks]) => 
+          decks.length > 0 && (
+            <TierList key={tier} tier={tier as TierType} decks={decks} />
+          )
+        )}
+
+        {/* Performance Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <CustomCard title="Win Rates by Deck" className="bg-white/50 backdrop-blur-sm">
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={Object.entries(tierData).flatMap(([tier, decks]) => 
+                    decks.map(deck => ({
+                      name: deck.deck,
+                      winRate: parseFloat(deck.winRate),
+                      tier
+                    }))
+                  )}
+                >
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                  <XAxis 
+                    dataKey="name" 
+                    angle={-45} 
+                    textAnchor="end" 
+                    height={80}
+                    interval={0}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis domain={[30, 60]} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      borderRadius: '8px',
+                      border: 'none',
+                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                  <Bar 
+                    dataKey="winRate" 
+                    fill="#4CAF50"
+                    name="Win Rate" 
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CustomCard>
+
+          <CustomCard title="Meta Share Distribution" className="bg-white/50 backdrop-blur-sm">
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={Object.entries(tierData).flatMap(([tier, decks]) => 
+                    decks.map(deck => ({
+                      name: deck.deck,
+                      metaShare: parseFloat(deck.metaShare),
+                      tier
+                    }))
+                  )}
+                >
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                  <XAxis 
+                    dataKey="name" 
+                    angle={-45} 
+                    textAnchor="end" 
+                    height={80}
+                    interval={0}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      borderRadius: '8px',
+                      border: 'none',
+                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                  <Bar 
+                    dataKey="metaShare" 
+                    name="Meta Share"
+                    radius={[4, 4, 0, 0]}
+                  >
+                    {Object.entries(tierData).flatMap(([tier, decks]) =>
+                      decks.map((_deck, index) => (
+                        <Cell key={`cell-${index}`} fill={colors[tier as TierType]} />
+                      ))
+                    )}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CustomCard>
+        </div>
+
+        {/* Matchup Analysis */}
+        <CustomCard title="Key Insights" className="bg-white/50 backdrop-blur-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <h3 className="font-bold text-lg">S-Tier Dominance</h3>
+              <p className="text-gray-600">
+                Mewtwo-EX leads with a remarkable 52.4% meta share and consistent performance across matchups.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-bold text-lg">Meta Diversity</h3>
+              <p className="text-gray-600">
+                15 competitive decks spread across 6 tiers, showing a healthy but concentrated competitive environment.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-bold text-lg">Performance Metrics</h3>
+              <p className="text-gray-600">
+                Top decks maintain favorable matchups against 6-8 other strategies, indicating balanced competition.
+              </p>
+            </div>
+          </div>
+        </CustomCard>
+      </motion.div>
+    </div>
+  );
+};
+
+export default PokemonTierDashboard;
