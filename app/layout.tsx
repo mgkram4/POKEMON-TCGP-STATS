@@ -40,8 +40,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: "TCGP Pocket",
+    url: "https://www.tcgpocketmeta.com",
     images: [{
-      url: '/header.jpg',
+      url: 'https://www.tcgpocketmeta.com/header.jpg',
       width: 1200,
       height: 630,
       alt: 'TCGP Pocket Header'
@@ -52,7 +53,7 @@ export const metadata: Metadata = {
     title: "TCGP Pocket - Pokemon TCG Meta Stats",
     description: "Mobile-friendly Pokemon Trading Card Game meta statistics and analysis for competitive TCGP play.",
     images: {
-      url: '/header.jpg',
+      url: 'https://www.tcgpocketmeta.com/header.jpg',
       alt: 'TCGP Pocket - Pokemon TCG Meta Stats'
     }
   },
