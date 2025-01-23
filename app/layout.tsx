@@ -19,25 +19,23 @@ export const metadata: Metadata = {
   description: "Mobile-friendly Pokemon Trading Card Game meta statistics and analysis. Track deck performance, matchups, and tier rankings for TCGP competitive play on the go.",
   keywords: "TCG Pocket, Pokemon TCGP, meta stats, mobile stats, deck analysis, competitive pokemon, TCGP meta",
   openGraph: {
-    title: "TCG Pocket - Pokemon TCGP Meta Stats",
+    title: "TCGP Pocket - Pokemon TCGP Meta Stats",
     description: "Mobile-friendly Pokemon Trading Card Game meta statistics and analysis for competitive TCGP play.",
-
-
     type: "website",
     locale: "en_US",
     siteName: "TCGP Pocket",
     images: [{
-      url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png',
+      url: '/header.jpg',
       width: 1200,
-      height: 1200,
-      alt: 'TCGP Pocket Logo'
+      height: 630,
+      alt: 'TCGP Pocket Header'
     }]
   },
   twitter: {
     card: "summary_large_image",
     title: "TCGP Pocket - Pokemon TCG Meta Stats",
     description: "Mobile-friendly Pokemon Trading Card Game meta statistics and analysis for competitive TCGP play.",
-    images: ['https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png']
+    images: ['/header.jpg']
   },
   robots: {
     index: true,
