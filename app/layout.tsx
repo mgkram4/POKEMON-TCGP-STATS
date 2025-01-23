@@ -51,7 +51,11 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "TCGP Pocket - Pokemon TCG Meta Stats",
     description: "Mobile-friendly Pokemon Trading Card Game meta statistics and analysis for competitive TCGP play.",
-    images: ['/header.jpg']
+    creator: "@m___dev",
+    images: {
+      url: '/header.jpg',
+      alt: 'TCGP Pocket - Pokemon TCG Meta Stats'
+    }
   },
   robots: {
     index: true,
