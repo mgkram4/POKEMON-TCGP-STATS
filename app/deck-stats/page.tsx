@@ -5,20 +5,21 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { FaCrown } from 'react-icons/fa';
 import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Cell,
-    Legend,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
 } from 'recharts';
 import { CustomCard } from '../components/card';
-import GoogleAd from '../components/GoogleAd';
+
+import { calculateDeckStats } from '../utils/statsCalculator';
 
 
 interface PokemonImage {
@@ -204,51 +205,14 @@ const DeckStatsPage = () => {
   const [deckStats, setDeckStats] = useState<DeckStats[]>([]);
 
   useEffect(() => {
-    const processCSVData = async () => {
+    const loadDeckStats = async () => {
       const response = await fetch('/trainerhill-meta-matchups-2025-01-21.csv');
       const text = await response.text();
-      const rows = text.split('\n').slice(1); // Skip header
-      
-      const deckMap = new Map<string, {
-        games: number;
-        wins: number;
-        losses: number;
-        favorableMatchups: Set<string>;
-      }>();
-
-      rows.forEach(row => {
-        const [deck1, deck2, wins, losses,, total, winRate] = row.split(',');
-        if (deck1 && deck2) {
-          // Update deck1 stats
-          if (!deckMap.has(deck1)) {
-            deckMap.set(deck1, {
-              games: 0,
-              wins: 0,
-              losses: 0,
-              favorableMatchups: new Set()
-            });
-          }
-          const deck1Stats = deckMap.get(deck1)!;
-          deck1Stats.games += parseInt(total);
-          deck1Stats.wins += parseInt(wins);
-          deck1Stats.losses += parseInt(losses);
-          if (parseFloat(winRate) > 50) {
-            deck1Stats.favorableMatchups.add(deck2);
-          }
-        }
-      });
-
-      const processedStats: DeckStats[] = Array.from(deckMap.entries()).map(([name, stats]) => ({
-        name,
-        totalGames: stats.games,
-        winRate: (stats.wins / (stats.wins + stats.losses)) * 100,
-        favorableMatchups: stats.favorableMatchups.size
-      }));
-
-      setDeckStats(processedStats.sort((a, b) => b.totalGames - a.totalGames));
+      const stats = calculateDeckStats(text);
+      setDeckStats(stats);
     };
 
-    processCSVData();
+    loadDeckStats();
   }, []);
 
   return (
@@ -265,9 +229,6 @@ const DeckStatsPage = () => {
           </h1>
         </div>
 
-        <div className="my-8">
-          <GoogleAd />
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <CustomCard title="Most Played Decks" className="bg-white/50 backdrop-blur-sm">
@@ -301,9 +262,7 @@ const DeckStatsPage = () => {
           </CustomCard>
         </div>
 
-        <div className="my-8">
-          <GoogleAd />
-        </div>
+  
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <CustomCard title="Win Rates Distribution" className="bg-white/50 backdrop-blur-sm">

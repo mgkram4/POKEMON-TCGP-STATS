@@ -6,7 +6,8 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { FaCrown } from 'react-icons/fa';
 import { CustomCard } from '../components/card';
-import GoogleAd from '../components/GoogleAd';
+
+import { calculateDeckStats } from '../utils/statsCalculator';
 
 interface MatchupData {
   deck1: string;
@@ -114,26 +115,33 @@ const MatchupsPage = () => {
     const processCSVData = async () => {
       const response = await fetch('/trainerhill-meta-matchups-2025-01-21.csv');
       const text = await response.text();
-      const rows = text.split('\n').slice(1); // Skip header
+      const rows = text.split('\n').slice(1);
       
-      const uniqueDecks = new Set<string>();
-      const processedData: MatchupData[] = [];
-
-      rows.forEach(row => {
-        const [deck1, deck2, , , , total, winRate] = row.split(',');
-        if (deck1 && deck2) {
-          uniqueDecks.add(deck1);
-          processedData.push({
+      const processedData: MatchupData[] = rows
+        .map(row => {
+          const [deck1, deck2,,,, total, winRate] = row.split(',');
+          if (!deck1 || !deck2 || !winRate) return null;
+          
+          return {
             deck1,
             deck2,
             winRate: parseFloat(winRate),
             totalGames: parseInt(total)
-          });
-        }
-      });
+          };
+        })
+        .filter((data): data is MatchupData => data !== null);
 
-      setDecks(Array.from(uniqueDecks));
-      setMatchupData(processedData);
+      // Use the shared stats calculator
+      const deckStats = calculateDeckStats(text);
+      const validDecks = new Set(deckStats.map(d => d.name));
+      
+      // Filter matchups to only include decks in our stats
+      const validMatchups = processedData.filter(
+        m => validDecks.has(m.deck1) && validDecks.has(m.deck2)
+      );
+
+      setDecks(Array.from(validDecks));
+      setMatchupData(validMatchups);
     };
 
     processCSVData();
@@ -190,10 +198,7 @@ const MatchupsPage = () => {
           </h1>
         </div>
 
-        <div className="my-8">
-          <GoogleAd />
-        </div>
-
+ 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -236,61 +241,38 @@ const MatchupsPage = () => {
             className="md:col-span-2"
           >
             <CustomCard title="Matchup Relationships" className="bg-white/50 backdrop-blur-sm">
-              <div className="h-[800px]">
+              <div className="h-[800px] md:h-[800px] relative">
                 <ResponsiveChord
                   data={processChordData().matrix}
                   keys={processChordData().keys}
-                  margin={{ top: 100, right: 200, bottom: 100, left: 200 }}
+                  margin={{ 
+                    top: 60,  // Reduced top margin
+                    right: 20, 
+                    bottom: 20,
+                    left: 20 
+                  }}
                   valueFormat=".1f"
-                  padAngle={0.04}
-                  innerRadiusRatio={0.9}
+                  padAngle={0.02}
+                  innerRadiusRatio={0.96}
                   innerRadiusOffset={0.02}
-                  arcOpacity={1}
-                  arcBorderWidth={2}
+                  arcOpacity={0.9}
+                  arcBorderWidth={1}
                   arcBorderColor={{ from: 'color', modifiers: [['darker', 0.4]] }}
-                  ribbonOpacity={0.7}
-                  ribbonBorderWidth={1}
+                  ribbonOpacity={0.5}
+                  ribbonBorderWidth={0.5}
                   ribbonBorderColor={{ from: 'color', modifiers: [['darker', 0.4]] }}
-                  enableLabel={true}
+                  enableLabel={typeof window !== 'undefined' && window.innerWidth >= 768}
                   label={d => formatDeckName(d.id)}
-                  labelOffset={20}
-                  labelRotation={-45}
+                  labelOffset={12}
+                  labelRotation={-30}
                   labelTextColor={{ from: 'color', modifiers: [['darker', 1]] }}
-                  colors={{ scheme: 'category10' }}
-                  motionConfig="gentle"
-                  legends={[
-                    {
-                      anchor: 'right',
-                      direction: 'column',
-                      justify: false,
-                      translateX: 120,
-                      translateY: 0,
-                      itemWidth: 100,
-                      itemHeight: 24,
-                      itemsSpacing: 8,
-                      itemTextColor: '#666',
-                      itemDirection: 'left-to-right',
-                      symbolSize: 18,
-                      symbolShape: 'circle',
-                      effects: [
-                        {
-                          on: 'hover',
-                          style: {
-                            itemTextColor: '#000'
-                          }
-                        }
-                      ]
-                    }
-                  ]}
                 />
               </div>
             </CustomCard>
           </motion.div>
         </div>
 
-        <div className="my-8">
-          <GoogleAd />
-        </div>
+   
       </motion.div>
     </div>
   );

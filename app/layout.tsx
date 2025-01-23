@@ -1,10 +1,9 @@
+import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from 'next/script';
-import GoogleAd from './components/GoogleAd';
+
 import Navigation from './components/navigation';
 import "./globals.css";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -22,14 +21,23 @@ export const metadata: Metadata = {
   openGraph: {
     title: "TCG Pocket - Pokemon TCGP Meta Stats",
     description: "Mobile-friendly Pokemon Trading Card Game meta statistics and analysis for competitive TCGP play.",
+
+
     type: "website",
     locale: "en_US",
     siteName: "TCGP Pocket",
+    images: [{
+      url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png',
+      width: 1200,
+      height: 1200,
+      alt: 'TCGP Pocket Logo'
+    }]
   },
   twitter: {
     card: "summary_large_image",
     title: "TCGP Pocket - Pokemon TCG Meta Stats",
     description: "Mobile-friendly Pokemon Trading Card Game meta statistics and analysis for competitive TCGP play.",
+    images: ['https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png']
   },
   robots: {
     index: true,
@@ -56,19 +64,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1233511905544381"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
+      
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <GoogleAd />
+  
         <Navigation />
         {children}
+        <Analytics />
       </body>
     </html>
   );

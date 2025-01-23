@@ -1,11 +1,12 @@
 "use client"
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaBolt, FaBrain, FaCrown, FaFire, FaFish, FaLeaf, FaWater } from 'react-icons/fa';
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CustomCard } from './components/card';
-import GoogleAd from './components/GoogleAd';
 
 // Pokémon TCG Theme Colors
 type TierType = 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
@@ -125,6 +126,7 @@ const getPokemonImage = async (pokemonName: string): Promise<PokemonImage | null
 };
 
 const TierCard = ({ deck, stats, tier }: TierCardProps) => {
+  const router = useRouter();
   const [pokemonImage, setPokemonImage] = useState<PokemonImage | null>(null);
 
   useEffect(() => {
@@ -142,21 +144,31 @@ const TierCard = ({ deck, stats, tier }: TierCardProps) => {
     return <Icon className={`text-xl text-pokemon-${iconData.color.split('.').pop()}`} />;
   };
 
+  const handleClick = () => {
+    // Convert deck name to URL-friendly slug
+    const slug = deck.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    router.push(`/deck/${slug}`);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="w-full"
+      onClick={handleClick}
     >
-      <div className="p-4 rounded-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+      <div className="p-4 rounded-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm cursor-pointer">
         <div className="flex items-center justify-between pb-2">
           <div className="flex items-center gap-2 text-sm font-medium">
             {pokemonImage ? (
-              <img 
+              <Image 
                 src={pokemonImage.imageUrl} 
                 alt={pokemonImage.name}
-                className="w-12 h-12 object-contain"
+                width={48}
+                height={48}
+                priority={true}
+                className="rounded-full"
               />
             ) : (
               getDeckIcon()
@@ -336,166 +348,234 @@ const PokemonTierDashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-7xl mx-auto space-y-8"
       >
-        <div className="flex items-center gap-4">
-          <FaCrown className="text-4xl text-yellow-500" />
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Pokémon TCG Meta Analysis
-          </h1>
-        </div>
-
-        {/* Meta Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <CustomCard title="Total Games" className="bg-white/50 backdrop-blur-sm">
-            <div className="text-3xl font-bold">155,460</div>
-          </CustomCard>
-          <CustomCard title="Average Win Rate" className="bg-white/50 backdrop-blur-sm">
-            <div className="text-3xl font-bold">46.52%</div>
-          </CustomCard>
-          <CustomCard title="Top Performer" className="bg-white/50 backdrop-blur-sm">
-            <div className="text-3xl font-bold">Mewtwo-EX</div>
-            <div className="text-sm text-gray-500">58.8 Performance Score</div>
-          </CustomCard>
-          <CustomCard title="Meta Diversity" className="bg-white/50 backdrop-blur-sm">
-            <div className="text-3xl font-bold">15 Decks</div>
-            <div className="text-sm text-gray-500">Across 6 Tiers</div>
-          </CustomCard>
-        </div>
-
-        {/* First Ad Placement - After Meta Overview */}
-        <div className="my-8">
-          <GoogleAd />
-        </div>
-
-        {/* Tier Lists */}
-        {Object.entries(tierData).map(([tier, decks]) => 
-          decks.length > 0 && (
-            <TierList key={tier} tier={tier as TierType} decks={decks} />
-          )
-        )}
-
-        {/* Second Ad Placement - Before Charts */}
-        <div className="my-8">
-          <GoogleAd />
-        </div>
-
-        {/* Performance Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <CustomCard title="Win Rates by Deck" className="bg-white/50 backdrop-blur-sm">
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={Object.entries(tierData).flatMap(([tier, decks]) => 
-                    decks.map(deck => ({
-                      name: deck.deck,
-                      winRate: parseFloat(deck.winRate),
-                      tier
-                    }))
-                  )}
+        {/* Meta Overview Section */}
+        <section className="mb-12">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-8 shadow-lg">
+            <div className="flex flex-col md:flex-row items-center gap-6 mb-8">
+              <div className="flex items-center gap-6">
+                <div className="flex -space-x-4">
+                  <div className="p-3 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl shadow-lg z-30">
+                    <FaCrown className="text-4xl text-white" />
+                  </div>
+                  <div className="p-3 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl shadow-lg z-20">
+                    <FaBrain className="text-4xl text-white" />
+                  </div>
+                  <div className="p-3 bg-gradient-to-br from-red-400 to-red-600 rounded-xl shadow-lg z-10">
+                    <FaFire className="text-4xl text-white" />
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Pokémon TCG Pocket Meta Analysis
+                  </h1>
+                  <p className="text-gray-600 mt-2 text-lg">
+                    Live meta analysis and deck performance tracking
+                  </p>
+                </div>
+              </div>
+              <div className="md:ml-auto flex flex-col md:flex-row items-center gap-4">
+                <motion.div
+                  initial={{ scale: 0.95 }}
+                  animate={{ scale: 1 }}
+                  transition={{ repeat: Infinity, duration: 2, repeatType: "reverse" }}
+                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-md"
                 >
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                  <XAxis 
-                    dataKey="name" 
-                    angle={-45} 
-                    textAnchor="end" 
-                    height={80}
-                    interval={0}
-                    tick={{ fontSize: 12 }}
-                  />
-                  <YAxis domain={[30, 60]} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                      borderRadius: '8px',
-                      border: 'none',
-                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-                    }}
-                  />
-                  <Bar 
-                    dataKey="winRate" 
-                    fill="#4CAF50"
-                    name="Win Rate" 
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+                  <span className="font-semibold">Last Updated:</span> {new Date().toLocaleDateString()}
+                </motion.div>
+                <div className="flex -space-x-2">
+                  {['mewtwo', 'charizard', 'pikachu'].map((pokemon) => (
+                    <Image
+                      key={pokemon}
+                      src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${
+                        pokemon === 'mewtwo' ? '150' : 
+                        pokemon === 'charizard' ? '6' : '25'
+                      }.png`}
+                      alt={pokemon}
+                      width={48}
+                      height={48}
+                      priority={true}
+                      className="rounded-full bg-white/50 p-1 shadow-lg"
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
-          </CustomCard>
 
-          <CustomCard title="Meta Share Distribution" className="bg-white/50 backdrop-blur-sm">
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={Object.entries(tierData).flatMap(([tier, decks]) => 
-                    decks.map(deck => ({
-                      name: deck.deck,
-                      metaShare: parseFloat(deck.metaShare),
-                      tier
-                    }))
-                  )}
-                >
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                  <XAxis 
-                    dataKey="name" 
-                    angle={-45} 
-                    textAnchor="end" 
-                    height={80}
-                    interval={0}
-                    tick={{ fontSize: 12 }}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <CustomCard 
+                title="Total Games" 
+                className="bg-gradient-to-br from-blue-50 to-blue-100"
+                icon={<FaBolt className="text-2xl text-blue-500" />}
+              >
+                <div className="text-3xl font-bold text-blue-700">155,460</div>
+              </CustomCard>
+              <CustomCard 
+                title="Average Win Rate" 
+                className="bg-gradient-to-br from-purple-50 to-purple-100"
+                icon={<FaBrain className="text-2xl text-purple-500" />}
+              >
+                <div className="text-3xl font-bold text-purple-700">46.52%</div>
+              </CustomCard>
+              <CustomCard 
+                title="Top Performer" 
+                className="bg-gradient-to-br from-green-50 to-green-100"
+                icon={<FaCrown className="text-2xl text-green-500" />}
+              >
+                <div className="flex items-center gap-2">
+                  <Image 
+                    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png"
+                    alt="Mewtwo"
+                    width={48}
+                    height={48}
+                    priority={true}
                   />
-                  <YAxis />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                      borderRadius: '8px',
-                      border: 'none',
-                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-                    }}
-                  />
-                  <Bar 
-                    dataKey="metaShare" 
-                    name="Meta Share"
-                    radius={[4, 4, 0, 0]}
-                  >
-                    {Object.entries(tierData).flatMap(([tier, decks]) =>
-                      decks.map((_deck, index) => (
-                        <Cell key={`cell-${index}`} fill={colors[tier as TierType]} />
-                      ))
-                    )}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CustomCard>
-        </div>
-
-        {/* Third Ad Placement - Before Key Insights */}
-        <div className="my-8">
-          <GoogleAd />
-        </div>
-
-        {/* Key Insights */}
-        <CustomCard title="Key Insights" className="bg-white/50 backdrop-blur-sm">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <h3 className="font-bold text-lg">S-Tier Dominance</h3>
-              <p className="text-gray-600">
-                Mewtwo-EX leads with a remarkable 52.4% meta share and consistent performance across matchups.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="font-bold text-lg">Meta Diversity</h3>
-              <p className="text-gray-600">
-                15 competitive decks spread across 6 tiers, showing a healthy but concentrated competitive environment.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="font-bold text-lg">Performance Metrics</h3>
-              <p className="text-gray-600">
-                Top decks maintain favorable matchups against 6-8 other strategies, indicating balanced competition.
-              </p>
+                  <div>
+                    <div className="text-3xl font-bold text-green-700">Mewtwo-EX</div>
+                    <div className="text-sm text-green-600">58.8 Performance Score</div>
+                  </div>
+                </div>
+              </CustomCard>
+              <CustomCard 
+                title="Meta Diversity" 
+                className="bg-gradient-to-br from-orange-50 to-orange-100"
+                icon={<FaLeaf className="text-2xl text-orange-500" />}
+              >
+                <div className="text-3xl font-bold text-orange-700">15 Decks</div>
+                <div className="text-sm text-orange-600">Across 6 Tiers</div>
+              </CustomCard>
             </div>
           </div>
-        </CustomCard>
+        </section>
+
+        {/* Tier Lists Section */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-6">Current Meta Tiers</h2>
+          {Object.entries(tierData).map(([tier, decks]) => 
+            decks.length > 0 && (
+              <TierList key={tier} tier={tier as TierType} decks={decks} />
+            )
+          )}
+        </section>
+
+        {/* Performance Analysis Section */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-6">Performance Analysis</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <CustomCard title="Win Rates by Deck" className="bg-white/50 backdrop-blur-sm">
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={Object.entries(tierData).flatMap(([tier, decks]) => 
+                      decks.map(deck => ({
+                        name: deck.deck,
+                        winRate: parseFloat(deck.winRate),
+                        tier
+                      }))
+                    )}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                    <XAxis 
+                      dataKey="name" 
+                      angle={-45} 
+                      textAnchor="end" 
+                      height={80}
+                      interval={0}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <YAxis domain={[30, 60]} />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        borderRadius: '8px',
+                        border: 'none',
+                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                      }}
+                    />
+                    <Bar 
+                      dataKey="winRate" 
+                      fill="#4CAF50"
+                      name="Win Rate" 
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CustomCard>
+
+            <CustomCard title="Meta Share Distribution" className="bg-white/50 backdrop-blur-sm">
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={Object.entries(tierData).flatMap(([tier, decks]) => 
+                      decks.map(deck => ({
+                        name: deck.deck,
+                        metaShare: parseFloat(deck.metaShare),
+                        tier
+                      }))
+                    )}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                    <XAxis 
+                      dataKey="name" 
+                      angle={-45} 
+                      textAnchor="end" 
+                      height={80}
+                      interval={0}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <YAxis />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        borderRadius: '8px',
+                        border: 'none',
+                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                      }}
+                    />
+                    <Bar 
+                      dataKey="metaShare" 
+                      name="Meta Share"
+                      radius={[4, 4, 0, 0]}
+                    >
+                      {Object.entries(tierData).flatMap(([tier, decks]) =>
+                        decks.map((_deck, index) => (
+                          <Cell key={`cell-${index}`} fill={colors[tier as TierType]} />
+                        ))
+                      )}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CustomCard>
+          </div>
+        </section>
+
+        {/* Key Insights Section */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-6">Key Meta Insights</h2>
+          <CustomCard className="bg-white/50 backdrop-blur-sm">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <h3 className="font-bold text-lg">S-Tier Dominance</h3>
+                <p className="text-gray-600">
+                  Mewtwo-EX leads with a remarkable 52.4% meta share and consistent performance across matchups.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-bold text-lg">Meta Diversity</h3>
+                <p className="text-gray-600">
+                  15 competitive decks spread across 6 tiers, showing a healthy but concentrated competitive environment.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-bold text-lg">Performance Metrics</h3>
+                <p className="text-gray-600">
+                  Top decks maintain favorable matchups against 6-8 other strategies, indicating balanced competition.
+                </p>
+              </div>
+            </div>
+          </CustomCard>
+        </section>
       </motion.div>
     </div>
   );

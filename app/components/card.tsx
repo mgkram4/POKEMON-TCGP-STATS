@@ -2,20 +2,20 @@ interface CustomCardProps {
   title?: string;
   children: React.ReactNode;
   className?: string;
+  icon?: React.ReactNode;
 }
 
-export function CustomCard({ title, children, className }: CustomCardProps) {
-  return (
-    <div className={`rounded-lg border bg-white shadow p-4 ${className || ''}`}>
-      {title && (
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">{title}</h3>
-        </div>
-      )}
-      <div>{children}</div>
-    </div>
-  );
-}
+export const CustomCard = ({ title, children, className, icon }: CustomCardProps) => (
+  <div className={`p-4 rounded-xl shadow-md ${className}`}>
+    {title && (
+      <div className="flex items-center gap-2 mb-2">
+        {icon}
+        <h3 className="font-semibold text-gray-700">{title}</h3>
+      </div>
+    )}
+    {children}
+  </div>
+);
 
 
 

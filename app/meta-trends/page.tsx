@@ -4,19 +4,18 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { FaCrown } from 'react-icons/fa';
 import {
-    Area,
-    AreaChart,
-    CartesianGrid,
-    Legend,
-    Line,
-    LineChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
 } from 'recharts';
-import { CustomCard } from '../components/card';
-import GoogleAd from '../components/GoogleAd';
+
 
 interface TrendData {
   date: string;
@@ -127,12 +126,8 @@ const MetaTrendsPage = () => {
           </h1>
         </div>
 
-        <div className="my-8">
-          <GoogleAd />
-        </div>
-
         <div className="grid grid-cols-1 gap-6">
-          <CustomCard title="Win Rate Trends" className="bg-white/50 backdrop-blur-sm">
+          <div title="Win Rate Trends" className="bg-white/50 backdrop-blur-sm">
             <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
@@ -173,9 +168,9 @@ const MetaTrendsPage = () => {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          </CustomCard>
+          </div>
 
-          <CustomCard title="Meta Share Trends" className="bg-white/50 backdrop-blur-sm">
+          <div title="Meta Share Trends" className="bg-white/50 backdrop-blur-sm">
             <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
@@ -216,9 +211,9 @@ const MetaTrendsPage = () => {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          </CustomCard>
+          </div>
 
-          <CustomCard title="Key Insights" className="bg-white/50 backdrop-blur-sm">
+          <div title="Key Insights" className="bg-white/50 backdrop-blur-sm">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <h3 className="font-bold text-lg">Win Rate Stability</h3>
@@ -239,20 +234,9 @@ const MetaTrendsPage = () => {
                 </p>
               </div>
             </div>
-          </CustomCard>
+          </div>
         </div>
 
-        <div className="my-8">
-          <GoogleAd />
-        </div>
-
-        <div className="my-8">
-          <GoogleAd />
-        </div>
-
-        <div className="my-8">
-          <GoogleAd />
-        </div>
       </motion.div>
     </div>
   );
