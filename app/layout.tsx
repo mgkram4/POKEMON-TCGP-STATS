@@ -19,7 +19,19 @@ export const metadata: Metadata = {
   description: "Mobile-friendly Pokemon Trading Card Game meta statistics and analysis. Track deck performance, matchups, and tier rankings for TCGP competitive play on the go.",
   keywords: "TCG Pocket, Pokemon TCGP, meta stats, mobile stats, deck analysis, competitive pokemon, TCGP meta",
   icons: {
-    icon: '/header.jpg',
+    icon: [
+      {
+        url: '/header.jpg',
+        sizes: '32x32',
+        type: 'image/jpg',
+      },
+      {
+        url: '/header.jpg',
+        sizes: '16x16',
+        type: 'image/jpg',
+      }
+    ],
+    shortcut: '/header.jpg',
     apple: '/header.jpg',
   },
   openGraph: {

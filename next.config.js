@@ -18,6 +18,7 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
+    domains: ['pokemon-tcgp-stats.vercel.app'],
   },
   // Add Content Security Policy for Google Ads
   async headers() {
