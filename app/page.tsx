@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { FaBolt, FaBrain, FaCrown, FaFire, FaFish, FaLeaf, FaWater } from 'react-icons/fa';
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CustomCard } from './components/card';
+import TestAd from './components/TestAd';
 
 // Pokémon TCG Theme Colors
 type TierType = 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
@@ -587,6 +588,7 @@ const PokemonTierDashboard = () => {
           </>
         )}
       </motion.div>
+      <TestAd />
     </div>
   );
 };
