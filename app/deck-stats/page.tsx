@@ -19,21 +19,18 @@ import {
 } from 'recharts';
 import { CustomCard } from '../components/card';
 
-import { calculateDeckStats } from '../utils/statsCalculator';
-
+interface DeckStats {
+  deck: string;
+  winRate: string;
+  metaShare: string;
+  totalGames: number;
+  favorableMatchups: number;
+  performanceScore: string;
+}
 
 interface PokemonImage {
   name: string;
   imageUrl: string;
-}
-
-interface DeckStats {
-  name: string;
-  totalGames: number;
-
-  
-  winRate: number;
-  favorableMatchups: number;
 }
 
 interface LegendPayload {
@@ -41,11 +38,18 @@ interface LegendPayload {
   payload: DeckStats;
 }
 
-// Add Pokemon API helper functions
+// Pokemon API helper functions
 const getPokemonNameForApi = (deckName: string): string => {
   const normalized = deckName.toLowerCase().replace(/[^a-z0-9-]/g, '');
   const specialCases: Record<string, string> = {
     'charizardexarcanine': 'charizard',
+    'charizardexmoltres': 'charizard',
+    'arcanineex': 'arcanine',
+    'serperiorexeggutor': 'serperior',
+    'golemdruddigon': 'golem',
+    'scolipede': 'scolipede',
+    'greninja': 'greninja',
+    'celebiex': 'celebi',
     'mewtwoex': 'mewtwo',
     'gyaradosex': 'gyarados',
     'exeggutorex': 'exeggutor',
@@ -80,11 +84,11 @@ const DeckItem = ({ deck, showStat = "games" }: { deck: DeckStats, showStat?: "g
   
   useEffect(() => {
     const loadPokemonImage = async () => {
-      const image = await getPokemonImage(deck.name);
+      const image = await getPokemonImage(deck.deck);
       setPokemonImage(image);
     };
     loadPokemonImage();
-  }, [deck.name]);
+  }, [deck.deck]);
 
   const formatDeckName = (name: string) => {
     return name
@@ -99,7 +103,7 @@ const DeckItem = ({ deck, showStat = "games" }: { deck: DeckStats, showStat?: "g
       className: "text-lg font-bold"
     },
     winRate: {
-      value: `${deck.winRate.toFixed(1)}%`,
+      value: `${deck.winRate}%`,
       className: "text-lg font-bold text-green-600"
     },
     matchups: {
@@ -123,7 +127,7 @@ const DeckItem = ({ deck, showStat = "games" }: { deck: DeckStats, showStat?: "g
           <FaCrown className="text-xl text-yellow-500" />
         )}
         <div>
-          <div className="font-medium">{formatDeckName(deck.name)}</div>
+          <div className="font-medium">{formatDeckName(deck.deck)}</div>
           <div className="text-xs text-gray-500">
             {showStat === "games" ? "Total Games" : 
              showStat === "winRate" ? "Win Rate" : 
@@ -147,9 +151,9 @@ const CustomLegend = ({ payload, deckStats }: {
   useEffect(() => {
     const loadImages = async () => {
       const imagePromises = payload.map(async (entry) => {
-        const image = await getPokemonImage(entry.payload.name);
+        const image = await getPokemonImage(entry.payload.deck);
         if (image) {
-          return [entry.payload.name, image.imageUrl];
+          return [entry.payload.deck, image.imageUrl];
         }
         return null;
       });
@@ -167,7 +171,7 @@ const CustomLegend = ({ payload, deckStats }: {
     loadImages();
   }, [payload]);
 
-  const totalGames = deckStats.reduce((acc: number, curr: DeckStats) => acc + curr.totalGames, 0);
+  const totalGames = deckStats.reduce((acc, curr) => acc + curr.totalGames, 0);
 
   return (
     <div className="flex flex-col gap-2 text-sm">
@@ -177,19 +181,19 @@ const CustomLegend = ({ payload, deckStats }: {
             className="w-3 h-3 rounded-full" 
             style={{ backgroundColor: entry.color }}
           />
-          {images[entry.payload.name] && (
+          {images[entry.payload.deck] && (
             <Image 
-              src={images[entry.payload.name]} 
-              alt={entry.payload.name}
+              src={images[entry.payload.deck]} 
+              alt={entry.payload.deck}
               width={24}
               height={24}
               className="object-contain"
             />
           )}
           <span className="font-medium">
-            {entry.payload.name
+            {entry.payload.deck
               .split('-')
-              .map((part: string) => part.charAt(0).toUpperCase() + part.slice(1))
+              .map(part => part.charAt(0).toUpperCase() + part.slice(1))
               .join(' ')}
           </span>
           <span className="text-gray-500">
@@ -203,17 +207,35 @@ const CustomLegend = ({ payload, deckStats }: {
 
 const DeckStatsPage = () => {
   const [deckStats, setDeckStats] = useState<DeckStats[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadDeckStats = async () => {
-      const response = await fetch('/trainerhill-meta-matchups-2025-01-21.csv');
-      const text = await response.text();
-      const stats = calculateDeckStats(text);
-      setDeckStats(stats);
+      try {
+        const response = await fetch('/api/meta-data');
+        const data = await response.json();
+        
+        if (data && data.tiers) {
+          const statsArray = Object.values(data.tiers).flat() as DeckStats[];
+          setDeckStats(statsArray);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error loading deck stats:', error);
+        setIsLoading(false);
+      }
     };
 
     loadDeckStats();
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-2xl text-gray-600">Loading stats...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -229,20 +251,22 @@ const DeckStatsPage = () => {
           </h1>
         </div>
 
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <CustomCard title="Most Played Decks" className="bg-white/50 backdrop-blur-sm">
             <div className="space-y-2">
-              {deckStats.slice(0, 5).map((deck, index) => (
-                <DeckItem key={index} deck={deck} showStat="games" />
-              ))}
+              {deckStats
+                .sort((a, b) => b.totalGames - a.totalGames)
+                .slice(0, 5)
+                .map((deck, index) => (
+                  <DeckItem key={index} deck={deck} showStat="games" />
+                ))}
             </div>
           </CustomCard>
 
           <CustomCard title="Highest Win Rates" className="bg-white/50 backdrop-blur-sm">
             <div className="space-y-2">
               {[...deckStats]
-                .sort((a, b) => b.winRate - a.winRate)
+                .sort((a, b) => parseFloat(b.winRate) - parseFloat(a.winRate))
                 .slice(0, 5)
                 .map((deck, index) => (
                   <DeckItem key={index} deck={deck} showStat="winRate" />
@@ -262,21 +286,19 @@ const DeckStatsPage = () => {
           </CustomCard>
         </div>
 
-  
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <CustomCard title="Win Rates Distribution" className="bg-white/50 backdrop-blur-sm">
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={[...deckStats]
-                    .sort((a, b) => b.winRate - a.winRate)
-                    .slice(0, 10)} // Show only top 10 decks
+                    .sort((a, b) => parseFloat(b.winRate) - parseFloat(a.winRate))
+                    .slice(0, 10)}
                   margin={{ top: 20, right: 30, left: 40, bottom: 60 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                   <XAxis 
-                    dataKey="name" 
+                    dataKey="deck" 
                     angle={-45}
                     textAnchor="end"
                     height={80}
@@ -284,7 +306,7 @@ const DeckStatsPage = () => {
                     tick={{ fontSize: 12 }}
                     tickFormatter={(value: string) => value
                       .split('-')
-                      .map((part: string) => part.charAt(0).toUpperCase() + part.slice(1))
+                      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
                       .join(' ')
                     }
                   />
@@ -298,10 +320,10 @@ const DeckStatsPage = () => {
                     }}
                   />
                   <Tooltip
-                    formatter={(value: number) => [`${value.toFixed(1)}%`, 'Win Rate']}
+                    formatter={(value: string) => [`${value}%`, 'Win Rate']}
                     labelFormatter={(label: string) => label
                       .split('-')
-                      .map((part: string) => part.charAt(0).toUpperCase() + part.slice(1))
+                      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
                       .join(' ')
                     }
                   />
@@ -311,9 +333,9 @@ const DeckStatsPage = () => {
                     radius={[4, 4, 0, 0]}
                   >
                     {[...deckStats]
-                      .sort((a, b) => b.winRate - a.winRate)
+                      .sort((a, b) => parseFloat(b.winRate) - parseFloat(a.winRate))
                       .slice(0, 10)
-                      .map((entry, index) => (
+                      .map((_, index) => (
                         <Cell 
                           key={`cell-${index}`}
                           fill={`hsl(${120 + (index * 5)}, 70%, 45%)`}
@@ -331,9 +353,9 @@ const DeckStatsPage = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={deckStats.slice(0, 8)} // Show top 8 decks
+                    data={deckStats.slice(0, 8)}
                     dataKey="totalGames"
-                    nameKey="name"
+                    nameKey="deck"
                     cx="35%"
                     cy="50%"
                     outerRadius={80}

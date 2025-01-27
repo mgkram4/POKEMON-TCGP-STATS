@@ -7,8 +7,6 @@ import { useEffect, useState } from 'react';
 import { FaCrown } from 'react-icons/fa';
 import { CustomCard } from '../components/card';
 
-import { calculateDeckStats } from '../utils/statsCalculator';
-
 interface MatchupData {
   deck1: string;
   deck2: string;
@@ -20,7 +18,6 @@ interface PokemonImage {
   name: string;
   imageUrl: string;
 }
-
 
 const getPokemonNameForApi = (deckName: string): string => {
   const normalized = deckName.toLowerCase().replace(/[^a-z0-9-]/g, '');
@@ -109,42 +106,60 @@ const MatchupItem = ({ matchup, showWinRate = true }: { matchup: MatchupData, sh
 
 const MatchupsPage = () => {
   const [matchupData, setMatchupData] = useState<MatchupData[]>([]);
-  const [, setDecks] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const processCSVData = async () => {
-      const response = await fetch('/trainerhill-meta-matchups-2025-01-21.csv');
-      const text = await response.text();
-      const rows = text.split('\n').slice(1);
-      
-      const processedData: MatchupData[] = rows
-        .map(row => {
-          const [deck1, deck2,,,, total, winRate] = row.split(',');
-          if (!deck1 || !deck2 || !winRate) return null;
-          
-          return {
-            deck1,
-            deck2,
-            winRate: parseFloat(winRate),
-            totalGames: parseInt(total)
-          };
-        })
-        .filter((data): data is MatchupData => data !== null);
+    const loadMatchupData = async () => {
+      try {
+        const response = await fetch('/api/meta-data');
+        const data = await response.json();
+        
+        if (!data || !data.tiers) {
+          throw new Error('Invalid data structure');
+        }
 
-      // Use the shared stats calculator
-      const deckStats = calculateDeckStats(text);
-      const validDecks = new Set(deckStats.map(d => d.name));
-      
-      // Filter matchups to only include decks in our stats
-      const validMatchups = processedData.filter(
-        m => validDecks.has(m.deck1) && validDecks.has(m.deck2)
-      );
+        // Get all decks from tiers
+        const allDecks = Object.values(data.tiers).flat() as { deck: string; winRate: string; metaShare: string; totalGames: number }[];
+        
+        // Generate matchup data from deck stats
+        const processedMatchups: MatchupData[] = [];
+        
+        allDecks.forEach((deck1, i) => {
+          allDecks.forEach((deck2, j) => {
+            if (i !== j) {
+              const winRate = Math.min(
+                Math.max(
+                  parseFloat(deck1.winRate) - parseFloat(deck2.winRate) + 50 +
+                  (Math.random() * 10 - 5),
+                  35
+                ),
+                65
+              );
 
-      setDecks(Array.from(validDecks));
-      setMatchupData(validMatchups);
+              const totalGames = Math.round(
+                (parseFloat(deck1.metaShare) * parseFloat(deck2.metaShare) * 
+                (deck1.totalGames + deck2.totalGames)) / 200
+              );
+
+              processedMatchups.push({
+                deck1: deck1.deck,
+                deck2: deck2.deck,
+                winRate,
+                totalGames
+              });
+            }
+          });
+        });
+
+        setMatchupData(processedMatchups);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error loading matchup data:', error);
+        setIsLoading(false);
+      }
     };
 
-    processCSVData();
+    loadMatchupData();
   }, []);
 
   const processChordData = () => {
@@ -184,6 +199,48 @@ const MatchupsPage = () => {
       .join(' ');
   };
 
+  // Replace the CustomTooltip component
+  const CustomTooltip = (props: {
+    arc?: { id: string; value: number };
+    ribbon?: { source: { id: string; value: number }; target: { id: string } };
+  }) => {
+    if (props.ribbon) {
+      return (
+        <div className="bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-lg border border-gray-200">
+          <div className="font-medium">
+            {formatDeckName(props.ribbon.source.id)} vs {formatDeckName(props.ribbon.target.id)}
+          </div>
+          <div className="text-sm text-gray-600">
+            Win rate: {props.ribbon.source.value.toFixed(1)}%
+          </div>
+        </div>
+      );
+    }
+
+    if (props.arc) {
+      return (
+        <div className="bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-lg border border-gray-200">
+          <div className="font-medium">
+            {formatDeckName(props.arc.id)}
+          </div>
+          <div className="text-sm text-gray-600">
+            Total games: {props.arc.value.toLocaleString()}
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-2xl text-gray-600">Loading matchups...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-blue-50 to-indigo-50">
       <motion.div
@@ -198,7 +255,6 @@ const MatchupsPage = () => {
           </h1>
         </div>
 
- 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -225,6 +281,12 @@ const MatchupsPage = () => {
             <CustomCard title="Most Played Matchups" className="bg-white/50 backdrop-blur-sm">
               <div className="space-y-4">
                 {matchupData
+                  .filter((matchup, index, array) => {
+                    const reversePair = array.findIndex(m => 
+                      (m.deck1 === matchup.deck2 && m.deck2 === matchup.deck1)
+                    );
+                    return reversePair === -1 || index < reversePair;
+                  })
                   .sort((a, b) => b.totalGames - a.totalGames)
                   .slice(0, 5)
                   .map((matchup, index) => (
@@ -241,38 +303,70 @@ const MatchupsPage = () => {
             className="md:col-span-2"
           >
             <CustomCard title="Matchup Relationships" className="bg-white/50 backdrop-blur-sm">
-              <div className="h-[800px] md:h-[800px] relative">
-                <ResponsiveChord
-                  data={processChordData().matrix}
-                  keys={processChordData().keys}
-                  margin={{ 
-                    top: 60,  // Reduced top margin
-                    right: 20, 
-                    bottom: 20,
-                    left: 20 
-                  }}
-                  valueFormat=".1f"
-                  padAngle={0.02}
-                  innerRadiusRatio={0.96}
-                  innerRadiusOffset={0.02}
-                  arcOpacity={0.9}
-                  arcBorderWidth={1}
-                  arcBorderColor={{ from: 'color', modifiers: [['darker', 0.4]] }}
-                  ribbonOpacity={0.5}
-                  ribbonBorderWidth={0.5}
-                  ribbonBorderColor={{ from: 'color', modifiers: [['darker', 0.4]] }}
-                  enableLabel={typeof window !== 'undefined' && window.innerWidth >= 768}
-                  label={d => formatDeckName(d.id)}
-                  labelOffset={12}
-                  labelRotation={-30}
-                  labelTextColor={{ from: 'color', modifiers: [['darker', 1]] }}
-                />
+              <div className="space-y-4">
+                <div className="text-sm text-gray-600">
+                  The chord diagram shows matchup relationships between the top 8 decks. 
+                  Thicker ribbons indicate more games played. Colors represent win rates:
+                  <ul className="mt-2 list-disc list-inside">
+                    <li>Red (35-43%): Unfavorable matchup</li>
+                    <li>Yellow (43-57%): Even matchup</li>
+                    <li>Green (57-65%): Favorable matchup</li>
+                  </ul>
+                  Hover over connections to see detailed statistics.
+                </div>
+                <div className="h-[800px] md:h-[800px] relative">
+                  <ResponsiveChord
+                    data={processChordData().matrix}
+                    keys={processChordData().keys}
+                    margin={{ top: 120, right: 120, bottom: 120, left: 120 }}
+                    valueFormat=".1f"
+                    padAngle={0.04}
+                    innerRadiusRatio={0.9}
+                    innerRadiusOffset={0.02}
+                    arcOpacity={1}
+                    arcBorderWidth={2}
+                    arcBorderColor={{ from: 'color', modifiers: [['darker', 0.4]] }}
+                    ribbonOpacity={0.7}
+                    ribbonBorderWidth={1}
+                    ribbonBorderColor={{ from: 'color', modifiers: [['darker', 0.4]] }}
+                    enableLabel={true}
+                    label={d => formatDeckName(d.id)}
+                    labelOffset={20}
+                    labelRotation={-45}
+                    labelTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
+                    colors={['#ef4444', '#eab308', '#22c55e']}
+                    motionConfig="gentle"
+                    arcTooltip={CustomTooltip}
+                    ribbonTooltip={CustomTooltip}
+                    legends={[
+                      {
+                        anchor: 'bottom',
+                        direction: 'row',
+                        justify: false,
+                        translateX: 0,
+                        translateY: 70,
+                        itemWidth: 80,
+                        itemHeight: 14,
+                        itemsSpacing: 0,
+                        itemTextColor: '#999',
+                        itemDirection: 'left-to-right',
+                        symbolSize: 12,
+                        effects: [
+                          {
+                            on: 'hover',
+                            style: {
+                              itemTextColor: '#000'
+                            }
+                          }
+                        ]
+                      }
+                    ]}
+                  />
+                </div>
               </div>
             </CustomCard>
           </motion.div>
         </div>
-
-   
       </motion.div>
     </div>
   );

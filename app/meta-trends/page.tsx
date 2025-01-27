@@ -15,7 +15,16 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
+import { CustomCard } from '../components/card';
 
+interface DeckStats {
+  deck: string;
+  winRate: string;
+  metaShare: string;
+  totalGames: number;
+  favorableMatchups: number;
+  performanceScore: string;
+}
 
 interface TrendData {
   date: string;
@@ -28,81 +37,62 @@ interface TrendData {
 const MetaTrendsPage = () => {
   const [trendData, setTrendData] = useState<TrendData[]>([]);
   const [topDecks, setTopDecks] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const processCSVData = async () => {
-      const response = await fetch('/trainerhill-meta-matchups-2025-01-21.csv');
-      const text = await response.text();
-      const rows = text.split('\n').slice(1); // Skip header
-      
-      // Group data by week for trending
-      const weeklyData = new Map<string, Map<string, {
-        wins: number;
-        games: number;
-      }>>();
+    const generateTrendData = async () => {
+      try {
+        const response = await fetch('/api/meta-data');
+        const data = await response.json();
+        
+        if (!data || !data.tiers) {
+          throw new Error('Invalid data structure');
+        }
 
-      rows.forEach(row => {
-        const [deck1, deck2, wins, , , total] = row.split(',');
-        if (deck1 && deck2) {
-          // For demo, create artificial weekly data
-          const dates = [
-            '2025-01-07', '2025-01-14', '2025-01-21'
-          ];
-          
+        // Get all decks from tiers
+        const allDecks = Object.values(data.tiers).flat() as DeckStats[];
+        
+        // Sort by total games to get top decks
+        const sortedDecks = [...allDecks].sort((a, b) => b.totalGames - a.totalGames);
+        const selectedTopDecks = sortedDecks.slice(0, 5).map(d => d.deck);
+        setTopDecks(selectedTopDecks);
+
+        // Generate artificial trend data for the past 3 weeks
+        const dates = [
+          '2025-01-07', 
+          '2025-01-14', 
+          '2025-01-21'
+        ];
+
+        const trends: TrendData[] = [];
+        selectedTopDecks.forEach(deck => {
+          const deckStats = allDecks.find(d => d.deck === deck)!;
+          const baseWinRate = parseFloat(deckStats.winRate);
+          const baseMetaShare = parseFloat(deckStats.metaShare);
+          const baseTotalGames = deckStats.totalGames / 3; // Divide total games across weeks
+
           dates.forEach((date, i) => {
-            if (!weeklyData.has(date)) {
-              weeklyData.set(date, new Map());
-            }
-            const weekMap = weeklyData.get(date)!;
-            
-            if (!weekMap.has(deck1)) {
-              weekMap.set(deck1, { wins: 0, games: 0 });
-            }
-            const deckStats = weekMap.get(deck1)!;
-            
             // Add some variance to create trends
             const variance = 1 + ((i - 1) * 0.1);
-            deckStats.wins += Math.round(parseInt(wins) * variance / 3);
-            deckStats.games += Math.round(parseInt(total) * variance / 3);
-          });
-        }
-      });
-
-      // Convert to trend data format
-      const trends: TrendData[] = [];
-      weeklyData.forEach((deckMap, date) => {
-        const totalGamesInWeek = Array.from(deckMap.values())
-          .reduce((sum, stats) => sum + stats.games, 0);
-
-        deckMap.forEach((stats, deck) => {
-          trends.push({
-            date,
-            deck,
-            winRate: (stats.wins / stats.games) * 100,
-            metaShare: (stats.games / totalGamesInWeek) * 100,
-            totalGames: stats.games
+            trends.push({
+              date,
+              deck,
+              winRate: baseWinRate * variance,
+              metaShare: baseMetaShare * variance,
+              totalGames: Math.round(baseTotalGames * variance)
+            });
           });
         });
-      });
 
-      // Get top 5 decks by total games
-      const deckTotals = new Map<string, number>();
-      trends.forEach(trend => {
-        deckTotals.set(trend.deck, 
-          (deckTotals.get(trend.deck) || 0) + trend.totalGames
-        );
-      });
-
-      const topDecksList = Array.from(deckTotals.entries())
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(([deck]) => deck);
-
-      setTopDecks(topDecksList);
-      setTrendData(trends);
+        setTrendData(trends);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error loading meta trends:', error);
+        setIsLoading(false);
+      }
     };
 
-    processCSVData();
+    generateTrendData();
   }, []);
 
   const formatDeckName = (name: string) => {
@@ -111,6 +101,14 @@ const MetaTrendsPage = () => {
       .map(part => part.charAt(0).toUpperCase() + part.slice(1))
       .join(' ');
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-2xl text-gray-600">Loading trends...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -127,7 +125,7 @@ const MetaTrendsPage = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-6">
-          <div title="Win Rate Trends" className="bg-white/50 backdrop-blur-sm">
+          <CustomCard title="Win Rate Trends" className="bg-white/50 backdrop-blur-sm">
             <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
@@ -168,9 +166,9 @@ const MetaTrendsPage = () => {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          </div>
+          </CustomCard>
 
-          <div title="Meta Share Trends" className="bg-white/50 backdrop-blur-sm">
+          <CustomCard title="Meta Share Trends" className="bg-white/50 backdrop-blur-sm">
             <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
@@ -211,9 +209,9 @@ const MetaTrendsPage = () => {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          </div>
+          </CustomCard>
 
-          <div title="Key Insights" className="bg-white/50 backdrop-blur-sm">
+          <CustomCard title="Key Insights" className="bg-white/50 backdrop-blur-sm">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <h3 className="font-bold text-lg">Win Rate Stability</h3>
@@ -234,9 +232,8 @@ const MetaTrendsPage = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </CustomCard>
         </div>
-
       </motion.div>
     </div>
   );

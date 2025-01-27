@@ -9,7 +9,7 @@ export interface DeckData {
   }[];
   matchups: {
     against: string;
-    favorability: 'Favorable' | 'Even' | 'Unfavorable';
+    favorability: 'Favorable' | 'Unfavorable' | 'Even';
     notes: string;
   }[];
   stats: {
@@ -22,49 +22,45 @@ export interface DeckData {
 }
 
 export const deckData: Record<string, DeckData> = {
-  'mewtwo-ex': {
-    name: 'Mewtwo-EX',
-    description: 'A dominant psychic-type deck that combines raw power with strategic disruption. Mewtwo-EX\'s ability to punish energy-heavy decks makes it a formidable force in the current meta.',
-    strategy: 'The deck focuses on early game pressure while setting up multiple Mewtwo-EX. Use energy acceleration to power up devastating attacks quickly. Save your Marnie and Boss\'s Orders for crucial moments to disrupt opponent\'s key plays. Against aggressive decks, focus on energy management and calculated trades.',
+  'mewtwo-ex-gardevoir': {
+    name: 'Mewtwo-EX/Gardevoir',
+    description: 'A powerful psychic-type combination that dominates the meta through consistent damage output and strategic energy acceleration.',
+    strategy: 'Focus on powering up Mewtwo-EX quickly while using Gardevoir\'s ability to accelerate energy attachment. Control the board through strategic energy management and powerful attacks.',
     keyCards: [
       {
         name: 'Mewtwo-EX',
         count: 4,
-        description: 'Main attacker with Psychic Infinity attack that scales with energy count'
+        description: 'Main attacker with powerful Psystrike attack'
       },
       {
-        name: 'Double Colorless Energy',
-        count: 4,
-        description: 'Essential for powering up Mewtwo-EX quickly and efficiently'
-      },
-      {
-        name: 'Marnie',
+        name: 'Gardevoir',
         count: 3,
-        description: 'Disrupts opponent\'s hand while providing card draw'
-      },
-      {
-        name: 'Boss\'s Orders',
-        count: 2,
-        description: 'Target key threats or weak benched Pokémon'
-      },
-      {
-        name: 'Quick Ball',
-        count: 4,
-        description: 'Searches for Pokémon while thinning deck'
+        description: 'Energy acceleration support'
       }
     ],
-    matchups: [],
+    matchups: [
+      {
+        against: 'Gyarados-EX/Greninja',
+        favorability: 'Favorable',
+        notes: 'Strong type advantage and energy control'
+      },
+      {
+        against: 'Charizard-EX/Arcanine',
+        favorability: 'Even',
+        notes: 'Trading blow for blow, depends on energy setup'
+      }
+    ],
     stats: {
-      winRate: "47.8",
-      metaShare: "52.4",
-      totalGames: 40698,
-      favorableMatchups: 7,
-      performanceScore: "58.8"
+      winRate: "49.4",
+      metaShare: "24.8",
+      totalGames: 3949,
+      favorableMatchups: 8,
+      performanceScore: "52.6"
     }
   },
-  'gyarados-ex': {
-    name: 'Gyarados-EX',
-    description: 'A powerful water-type deck that combines consistent damage output with impressive energy acceleration. Known for its ability to stream attackers efficiently and apply constant pressure.',
+  'gyarados-ex-a1a-greninja-a1': {
+    name: 'Gyarados-EX/Greninja',
+    description: 'A high-risk, high-reward water-type deck that dominates certain matchups while struggling against others. Despite having polarizing matchups, maintains a significant meta presence.',
     strategy: 'Focus on setting up multiple Gyarados-EX while using support Pokémon to accelerate energy attachment. Use Melony to power up attackers quickly and maintain pressure. Save switching cards for crucial pivot moments and to preserve energy resources.',
     keyCards: [
       {
@@ -93,18 +89,34 @@ export const deckData: Record<string, DeckData> = {
         description: 'Basic energy for powering attacks and Melony'
       }
     ],
-    matchups: [],
+    matchups: [
+      {
+        against: 'Pikachu-EX/Zebstrika',
+        favorability: 'Unfavorable',
+        notes: 'Struggles with a 25.6% win rate against electric types'
+      },
+      {
+        against: 'Mewtwo-EX/Gardevoir',
+        favorability: 'Unfavorable',
+        notes: 'Difficult matchup with 34.6% win rate'
+      },
+      {
+        against: 'Scolipede',
+        favorability: 'Favorable',
+        notes: 'Strong 66.9% win rate against poison types'
+      }
+    ],
     stats: {
-      winRate: "48.6",
-      metaShare: "37.8",
-      totalGames: 29388,
-      favorableMatchups: 7,
-      performanceScore: "54.8"
+      winRate: "49.4",
+      metaShare: "14.3",
+      totalGames: 2278,
+      favorableMatchups: 6,
+      performanceScore: "51.2"
     }
   },
-  'pikachu-ex': {
-    name: 'Pikachu-EX',
-    description: 'A fast-paced electric-type deck that excels at dealing consistent damage through bench utilization. Known for setting the pace of the metagame with its Circle Circuit attack that can deal up to 90 damage with just two energies.',
+  'pikachu-ex-zebstrika-a1': {
+    name: 'Pikachu-EX/Zebstrika',
+    description: 'A lightning-fast electric-type deck that excels at punishing water-type strategies. Known for its incredibly strong Gyarados-EX matchup with a 72.7% win rate.',
     strategy: 'Fill your bench with Electric-type Pokémon to maximize Circle Circuit damage output. Focus on early game pressure while managing your bench count. Use support Pokémon like Dedenne for paralysis control or Electabuzz for targeted damage. Save switching cards to protect damaged Pikachu-EX.',
     keyCards: [
       {
@@ -133,18 +145,34 @@ export const deckData: Record<string, DeckData> = {
         description: 'Crucial for mobility and protecting damaged Pikachu-EX'
       }
     ],
-    matchups: [],
+    matchups: [
+      {
+        against: 'Gyarados-EX/Greninja',
+        favorability: 'Favorable',
+        notes: 'Dominant 72.7% win rate against water types'
+      },
+      {
+        against: 'Mewtwo-EX/Gardevoir',
+        favorability: 'Unfavorable',
+        notes: 'Struggles with 42.4% win rate'
+      },
+      {
+        against: 'Aerodactyl-EX',
+        favorability: 'Favorable',
+        notes: 'Solid 50.3% win rate in a close matchup'
+      }
+    ],
     stats: {
-      winRate: "52.3",
-      metaShare: "38.5",
-      totalGames: 25432,
-      favorableMatchups: 6,
-      performanceScore: "56.4"
+      winRate: "49.6",
+      metaShare: "8.3",
+      totalGames: 1328,
+      favorableMatchups: 5,
+      performanceScore: "50.8"
     }
   },
   'exeggutor-ex': {
     name: 'Exeggutor-EX',
-    description: 'A control-oriented deck that specializes in energy denial and disruption strategies. Known for its ability to lock opponents out of the game through resource management.',
+    description: 'A highly represented control deck making up 16.6% of the meta. Excels at energy denial and disruption strategies, with particularly strong matchups against energy-dependent decks.',
     strategy: 'Focus on denying opponent\'s energy attachments while building up your own board state. Use support cards to maintain hand advantage and control the pace of the game.',
     keyCards: [
       {
@@ -184,7 +212,7 @@ export const deckData: Record<string, DeckData> = {
   },
   'aerodactyl-ex': {
     name: 'Aerodactyl-EX',
-    description: 'A versatile fighting-type deck that excels at targeting EX Pokémon and applying consistent pressure through its unique attacks.',
+    description: 'A consistent fighting-type deck that maintains a solid presence in the meta with an 8.6% share. Shows particular strength against EX-heavy strategies.',
     strategy: 'Set up multiple Aerodactyl-EX while using support Pokémon to maintain board control. Focus on targeting opponent\'s EX Pokémon for efficient prize trades.',
     keyCards: [
       {
@@ -209,7 +237,7 @@ export const deckData: Record<string, DeckData> = {
   },
   'celebi-ex': {
     name: 'Celebi-EX',
-    description: 'A technical grass-type deck that utilizes time-based mechanics and unique ability combinations.',
+    description: 'A significant meta contender with 11.6% meta share, utilizing unique time-based mechanics. Shows mixed performance but maintains a strong presence.',
     strategy: 'Use Celebi-EX\'s ability to set up powerful combinations while maintaining board control. Focus on energy acceleration and strategic prize trades.',
     keyCards: [
       {
@@ -235,6 +263,7 @@ export const deckData: Record<string, DeckData> = {
   'charizard-ex-arcanine': {
     name: 'Charizard-EX/Arcanine',
     description: 'A fire-type combination deck that leverages both Charizard-EX\'s raw power and Arcanine\'s support capabilities.',
+    
     strategy: 'Build up energy on Charizard-EX while using Arcanine for support and backup attacks. Maintain pressure through consistent damage output.',
     keyCards: [
       {
