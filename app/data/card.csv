@@ -1,0 +1,287 @@
+Card Number,Name,Rarity,Type,HP,Stage,Points
+A1 001,"Bulbasaur",◇,Mewtwo,70,Basic,35
+A1 002,"Ivysaur",◇◇,Mewtwo,90,Stage 1,70
+A1 003,"Venusaur",◇◇◇,Mewtwo,160,Stage 2,150
+A1 004,"Venusaur ex",◇◇◇◇,Mewtwo,190,Stage 2,500
+A1 005,"Caterpie",◇,Pikachu,50,Basic,35
+A1 006,"Metapod",◇,Pikachu,80,Stage 1,35
+A1 007,"Butterfree",◇◇◇,Pikachu,120,Stage 2,150
+A1 008,"Weedle",◇,Mewtwo,50,Basic,35
+A1 009,"Kakuna",◇,Mewtwo,80,Stage 1,35
+A1 010,"Beedrill",◇◇◇,Mewtwo,120,Stage 2,150
+A1 011,"Oddish",◇,Charizard,60,Basic,35
+A1 012,"Gloom",◇◇,Charizard,80,Stage 1,70
+A1 013,"Vileplume",◇◇◇,Charizard,140,Stage 2,150
+A1 014,"Paras",◇,Pikachu,70,Basic,35
+A1 015,"Parasect",◇◇,Pikachu,120,Stage 1,70
+A1 016,"Venonat",◇,Mewtwo,60,Basic,35
+A1 017,"Venomoth",◇◇,Mewtwo,80,Stage 1,70
+A1 018,"Bellsprout",◇,Charizard,60,Basic,35
+A1 019,"Weepinbell",◇◇,Charizard,90,Stage 1,70
+A1 020,"Victreebel",◇◇◇,Charizard,140,Stage 2,150
+A1 021,"Exeggcute",◇,Charizard,50,Basic,35
+A1 022,"Exeggutor",◇◇◇,Charizard,130,Stage 1,150
+A1 023,"Exeggutor ex",◇◇◇◇,Charizard,160,Stage 1,500
+A1 024,"Tangela",◇,Charizard,80,Basic,35
+A1 025,"Scyther",◇,Mewtwo,70,Basic,35
+A1 026,"Pinsir",◇◇,Any,90,Basic,70
+A1 027,"Cottonee",◇,Any,50,Basic,35
+A1 028,"Whimsicott",◇◇,Any,80,Stage 1,70
+A1 029,"Petilil",◇,Any,60,Basic,35
+A1 030,"Lilligant",◇◇,Any,100,Stage 1,70
+A1 031,"Skiddo",◇,Charizard,70,Basic,35
+A1 032,"Gogoat",◇,Charizard,120,Stage 1,35
+A1 033,"Charmander",◇,Charizard,60,Basic,35
+A1 034,"Charmeleon",◇◇,Charizard,90,Stage 1,70
+A1 035,"Charizard",◇◇◇,Charizard,150,Stage 2,150
+A1 036,"Charizard ex",◇◇◇◇,Charizard,180,Stage 2,500
+A1 037,"Vulpix",◇,Charizard,50,Basic,35
+A1 038,"Ninetales",◇◇,Charizard,90,Stage 1,70
+A1 039,"Growlithe",◇,Pikachu,70,Basic,35
+A1 040,"Arcanine",◇◇◇,Pikachu,130,Stage 1,150
+A1 041,"Arcanine ex",◇◇◇◇,Pikachu,150,Stage 1,500
+A1 042,"Ponyta",◇,Any,60,Basic,35
+A1 043,"Rapidash",◇◇,Any,100,Stage 1,70
+A1 044,"Magmar",◇,Charizard,80,Basic,35
+A1 045,"Flareon",◇◇◇,Charizard,120,Stage 1,150
+A1 046,"Moltres",◇◇◇,Charizard,100,Basic,150
+A1 047,"Moltres ex",◇◇◇◇,Charizard,140,Basic,500
+A1 048,"Heatmor",◇,Any,80,Basic,35
+A1 049,"Salandit",◇,Mewtwo,60,Basic,35
+A1 050,"Salazzle",◇,Mewtwo,90,Stage 1,35
+A1 051,"Sizzlipede",◇,Any,60,Basic,35
+A1 052,"Centiskorch",◇◇,Any,130,Stage 1,70
+A1 053,"Squirtle",◇,Pikachu,60,Basic,35
+A1 054,"Wartortle",◇◇,Pikachu,80,Stage 1,70
+A1 055,"Blastoise",◇◇◇,Pikachu,150,Stage 2,150
+A1 056,"Blastoise ex",◇◇◇◇,Pikachu,180,Stage 2,500
+A1 057,"Psyduck",◇,Any,60,Basic,35
+A1 058,"Golduck",◇◇,Any,90,Stage 1,70
+A1 059,"Poliwag",◇,Charizard,60,Basic,35
+A1 060,"Poliwhirl",◇◇,Charizard,90,Stage 1,70
+A1 061,"Poliwrath",◇◇◇,Charizard,150,Stage 2,150
+A1 062,"Tentacool",◇,Mewtwo,60,Basic,35
+A1 063,"Tentacruel",◇◇,Mewtwo,110,Stage 1,70
+A1 064,"Seel",◇,Pikachu,80,Basic,35
+A1 065,"Dewgong",◇◇,Pikachu,120,Stage 1,70
+A1 066,"Shellder",◇,Mewtwo,60,Basic,35
+A1 067,"Cloyster",◇◇,Mewtwo,120,Stage 1,70
+A1 068,"Krabby",◇,Mewtwo,70,Basic,35
+A1 069,"Kingler",◇◇,Mewtwo,120,Stage 1,70
+A1 070,"Horsea",◇,Pikachu,60,Basic,35
+A1 071,"Seadra",◇◇,Pikachu,70,Stage 1,70
+A1 072,"Goldeen",◇,Pikachu,60,Basic,35
+A1 073,"Seaking",◇,Pikachu,100,Stage 1,35
+A1 074,"Staryu",◇,Charizard,50,Basic,35
+A1 075,"Starmie",◇◇,Charizard,90,Stage 1,70
+A1 076,"Starmie ex",◇◇◇◇,Charizard,130,Stage 1,500
+A1 077,"Magikarp",◇,Pikachu,30,Basic,35
+A1 078,"Gyarados",◇◇◇,Pikachu,150,Stage 1,150
+A1 079,"Lapras",◇◇◇,Charizard,100,Basic,150
+A1 080,"Vaporeon",◇◇◇,Mewtwo,130,Stage 1,150
+A1 081,"Omanyte",◇◇,Pikachu,90,Stage 1,70
+A1 082,"Omastar",◇◇◇,Pikachu,140,Stage 2,150
+A1 083,"Articuno",◇◇◇,Mewtwo,100,Basic,150
+A1 084,"Articuno ex",◇◇◇◇,Mewtwo,140,Basic,500
+A1 085,"Ducklett",◇,Charizard,50,Basic,35
+A1 086,"Swanna",◇◇,Charizard,90,Stage 1,70
+A1 087,"Froakie",◇,Charizard,60,Basic,35
+A1 088,"Frogadier",◇◇,Charizard,80,Stage 1,70
+A1 089,"Greninja",◇◇◇,Charizard,120,Stage 2,150
+A1 090,"Pyukumuku",◇,Charizard,70,Basic,35
+A1 091,"Bruxish",◇◇,Any,90,Basic,70
+A1 092,"Snom",◇,Any,50,Basic,35
+A1 093,"Frosmoth",◇◇,Any,90,Stage 1,70
+A1 094,"Pikachu",◇,Pikachu,60,Basic,35
+A1 095,"Raichu",◇◇◇,Pikachu,100,Stage 1,150
+A1 096,"Pikachu ex",◇◇◇◇,Pikachu,120,Basic,500
+A1 097,"Magnemite",◇,Pikachu,60,Basic,35
+A1 098,"Magneton",◇◇◇,Pikachu,80,Stage 1,150
+A1 099,"Voltorb",◇,Pikachu,60,Basic,35
+A1 100,"Electrode",◇◇,Pikachu,80,Stage 1,70
+A1 101,"Electabuzz",◇,Pikachu,70,Basic,35
+A1 102,"Jolteon",◇◇◇,Pikachu,90,Stage 1,150
+A1 103,"Zapdos",◇◇◇,Pikachu,100,Basic,150
+A1 104,"Zapdos ex",◇◇◇◇,Pikachu,130,Basic,500
+A1 105,"Blitzle",◇,Any,60,Basic,35
+A1 106,"Zebstrika",◇◇,Any,90,Stage 1,70
+A1 107,"Tynamo",◇,Mewtwo,30,Basic,35
+A1 108,"Eelektrik",◇◇,Mewtwo,80,Stage 1,70
+A1 109,"Eelektross",◇◇◇,Mewtwo,140,Stage 2,150
+A1 110,"Helioptile",◇,Any,60,Basic,35
+A1 111,"Heliolisk",◇,Any,90,Stage 1,35
+A1 112,"Pincurchin",◇◇,Any,70,Basic,70
+A1 113,"Clefairy",◇,Pikachu,60,Basic,35
+A1 114,"Clefable",◇◇,Pikachu,100,Stage 1,70
+A1 115,"Abra",◇,Charizard,60,Basic,35
+A1 116,"Kadabra",◇◇,Charizard,80,Stage 1,70
+A1 117,"Alakazam",◇◇◇,Charizard,130,Stage 2,150
+A1 118,"Slowpoke",◇,Any,70,Basic,35
+A1 119,"Slowbro",◇◇,Any,130,Stage 1,70
+A1 120,"Gastly",◇,Mewtwo,60,Basic,35
+A1 121,"Haunter",◇◇,Mewtwo,80,Stage 1,70
+A1 122,"Gengar",◇◇◇,Mewtwo,130,Stage 2,150
+A1 123,"Gengar ex",◇◇◇◇,Mewtwo,170,Stage 2,500
+A1 124,"Drowzee",◇,Pikachu,70,Basic,35
+A1 125,"Hypno",◇◇◇,Pikachu,100,Stage 1,150
+A1 126,"Mr. Mime",◇◇,Mewtwo,80,Basic,70
+A1 127,"Jynx",◇,Mewtwo,80,Basic,35
+A1 128,"Mewtwo",◇◇◇,Mewtwo,120,Basic,150
+A1 129,"Mewtwo ex",◇◇◇◇,Mewtwo,150,Basic,500
+A1 130,"Ralts",◇,Mewtwo,60,Basic,35
+A1 131,"Kirlia",◇◇,Mewtwo,80,Stage 1,70
+A1 132,"Gardevoir",◇◇◇,Mewtwo,110,Stage 2,150
+A1 133,"Woobat",◇,Any,60,Basic,35
+A1 134,"Swoobat",◇,Any,60,Stage 1,70
+A1 135,"Golett",◇,Any,90,Basic,35
+A1 136,"Golurk",◇◇,Any,140,Stage 1,70
+A1 137,"Sandshrew",◇,Any,70,Basic,35
+A1 138,"Sandslash",◇◇,Any,100,Stage 1,70
+A1 139,"Diglett",◇,Pikachu,50,Basic,35
+A1 140,"Dugtrio",◇◇,Pikachu,70,Stage 1,70
+A1 141,"Mankey",◇,Charizard,60,Basic,35
+A1 142,"Primeape",◇◇,Charizard,90,Stage 1,70
+A1 143,"Machop",◇,Charizard,70,Basic,35
+A1 144,"Machoke",◇◇,Charizard,100,Stage 1,70
+A1 145,"Machamp",◇◇◇,Charizard,150,Stage 2,150
+A1 146,"Machamp ex",◇◇◇◇,Charizard,180,Stage 2,500
+A1 147,"Geodude",◇,Pikachu,70,Basic,35
+A1 148,"Graveler",◇◇,Pikachu,100,Stage 1,70
+A1 149,"Golem",◇◇◇,Pikachu,160,Stage 2,150
+A1 150,"Onix",◇◇,Pikachu,110,Basic,70
+A1 151,"Cubone",◇,Mewtwo,60,Basic,35
+A1 152,"Marowak",◇◇,Mewtwo,100,Stage 1,70
+A1 153,"Marowak ex",◇◇◇◇,Mewtwo,140,Stage 1,500
+A1 154,"Hitmonlee",◇,Mewtwo,80,Basic,35
+A1 155,"Hitmonchan",◇,Charizard,80,Basic,35
+A1 156,"Rhyhorn",◇,Mewtwo,80,Basic,35
+A1 157,"Rhydon",◇◇,Mewtwo,120,Stage 1,70
+A1 158,"Kabuto",◇◇,Charizard,90,Stage 1,70
+A1 159,"Kabutops",◇◇◇,Charizard,140,Stage 2,150
+A1 160,"Mienfoo",◇,Pikachu,60,Basic,35
+A1 161,"Mienshao",◇◇,Pikachu,80,Stage 1,70
+A1 162,"Clobbopus",◇,Any,80,Basic,35
+A1 163,"Grapploct",◇◇,Any,130,Stage 1,70
+A1 164,"Ekans",◇,Any,60,Basic,35
+A1 165,"Arbok",◇◇,Any,100,Stage 1,70
+A1 166,"Nidoran F",◇,Pikachu,60,Basic,35
+A1 167,"Nidorina",◇◇,Pikachu,80,Stage 1,70
+A1 168,"Nidoqueen",◇◇◇,Pikachu,140,Stage 2,150
+A1 169,"Nidoran M",◇,Pikachu,60,Basic,35
+A1 170,"Nidorino",◇◇,Pikachu,90,Stage 1,70
+A1 171,"Nidoking",◇◇◇,Pikachu,150,Stage 2,150
+A1 172,"Zubat",◇,Mewtwo,50,Basic,35
+A1 173,"Golbat",◇◇,Mewtwo,40,Stage 1,70
+A1 174,"Grimer",◇,Mewtwo,70,Basic,35
+A1 175,"Muk",◇◇◇,Mewtwo,130,Stage 1,150
+A1 176,"Koffing",◇,Mewtwo,70,Basic,35
+A1 177,"Weezing",◇◇◇,Mewtwo,110,Stage 1,150
+A1 178,"Mawile",◇,Charizard,70,Basic,35
+A1 179,"Pawniard",◇,Any,50,Basic,35
+A1 180,"Bisharp",◇◇,Any,70,Stage 1,70
+A1 181,"Meltan",◇,Charizard,70,Basic,35
+A1 182,"Melmetal",◇◇◇,Charizard,130,Stage 1,150
+A1 183,"Dratini",◇,Mewtwo,70,Basic,35
+A1 184,"Dragonair",◇◇,Mewtwo,100,Stage 1,70
+A1 185,"Dragonite",◇◇◇,Mewtwo,160,Stage 2,150
+A1 186,"Pidgey",◇,Mewtwo,60,Basic,35
+A1 187,"Pidgeotto",◇,Mewtwo,80,Stage 1,35
+A1 188,"Pidgeot",◇◇◇,Mewtwo,130,Stage 2,150
+A1 189,"Rattata",◇,Any,40,Basic,35
+A1 190,"Raticate",◇,Any,80,Stage 1,35
+A1 191,"Spearow",◇,Charizard,60,Basic,35
+A1 192,"Fearow",◇,Charizard,100,Stage 1,35
+A1 193,"Jigglypuff",◇,Pikachu,60,Basic,35
+A1 194,"Wigglytuff",◇,Pikachu,100,Stage 1,35
+A1 195,"Wigglytuff ex",◇◇◇◇,Pikachu,140,Stage 1,500
+A1 196,"Meowth",◇,Charizard,60,Basic,35
+A1 197,"Persian",◇◇,Charizard,90,Stage 1,70
+A1 198,"Farfetch",◇,Any,60,Basic,35
+A1 199,"Doduo",◇,Any,60,Basic,35
+A1 200,"Dodrio",◇◇,Any,80,Stage 1,70
+A1 201,"Lickitung",◇◇,Mewtwo,90,Basic,70
+A1 202,"Chansey",◇◇,Pikachu,120,Basic,70
+A1 203,"Kangaskhan",◇◇◇,Charizard,100,Basic,150
+A1 204,"Tauros",◇◇,Charizard,100,Basic,70
+A1 205,"Ditto",◇◇◇,Mewtwo,70,Basic,150
+A1 206,"Eevee",◇,Charizard,60,Basic,35
+A1 207,"Eevee",◇,Mewtwo,60,Basic,35
+A1 208,"Eevee",◇,Pikachu,60,Basic,35
+A1 209,"Porygon",◇◇,Mewtwo,50,Basic,70
+A1 210,"Aerodactyl",◇◇◇,Mewtwo,100,Stage 1,150
+A1 211,"Snorlax",◇◇◇,Pikachu,150,Basic,150
+A1 212,"Minccino",◇,Any,60,Basic,35
+A1 213,"Cinccino",◇◇,Any,90,Stage 1,70
+A1 214,"Wooloo",◇,Any,70,Basic,35
+A1 215,"Dubwool",◇,Any,120,Stage 1,35
+A1 216,"Helix Fossil",◇,Pikachu,,,35
+A1 217,"Dome Fossil",◇,Charizard,,,35
+A1 218,"Old Amber",◇,Mewtwo,,,35
+A1 219,"Erika",◇◇,Charizard,,,70
+A1 220,"Misty",◇◇,Pikachu,,,70
+A1 221,"Blaine",◇◇,Charizard,,,70
+A1 222,"Koga",◇◇,Mewtwo,,,70
+A1 223,"Giovanni",◇◇,Mewtwo,,,70
+A1 224,"Brock",◇◇,Pikachu,,,70
+A1 225,"Sabrina",◇◇,Charizard,,,70
+A1 226,"Lt. Surge",◇◇,Pikachu,,,70
+A1 227,"Bulbasaur",☆,Mewtwo,70,Basic,400
+A1 228,"Gloom",☆,Charizard,80,Stage 1,400
+A1 229,"Pinsir",☆,Charizard,90,Basic,400
+A1 230,"Charmander",☆,Charizard,60,Basic,400
+A1 231,"Rapidash",☆,Charizard,100,Stage 1,400
+A1 232,"Squirtle",☆,Pikachu,60,Basic,400
+A1 233,"Gyarados",☆,Pikachu,150,Stage 1,400
+A1 234,"Lapras",☆,Charizard,100,Basic,400
+A1 235,"Electrode",☆,Pikachu,80,Stage 1,400
+A1 236,"Alakazam",☆,Charizard,130,Stage 2,400
+A1 237,"Slowpoke",☆,Charizard,70,Basic,400
+A1 238,"Diglett",☆,Pikachu,50,Basic,400
+A1 239,"Cubone",☆,Mewtwo,60,Basic,400
+A1 240,"Nidoqueen",☆,Pikachu,140,Stage 2,400
+A1 241,"Nidoking",☆,Pikachu,150,Stage 2,400
+A1 242,"Golbat",☆,Mewtwo,40,Stage 1,400
+A1 243,"Weezing",☆,Mewtwo,110,Stage 1,400
+A1 244,"Dragonite",☆,Mewtwo,160,Stage 2,400
+A1 245,"Pidgeot",☆,Mewtwo,130,Stage 2,400
+A1 246,"Meowth",☆,Charizard,60,Basic,400
+A1 247,"Ditto",☆,Mewtwo,70,Basic,400
+A1 248,"Eevee",☆,Pikachu,60,Basic,400
+A1 249,"Porygon",☆,Mewtwo,50,Basic,400
+A1 250,"Snorlax",☆,Pikachu,150,Basic,400
+A1 251,"Venusaur ex",☆☆,Mewtwo,190,Stage 2,250
+A1 252,"Exeggutor ex",☆☆,Charizard,160,Stage 1,250
+A1 253,"Charizard ex",☆☆,Charizard,180,Stage 2,250
+A1 254,"Arcanine ex",☆☆,Pikachu,150,Stage 1,250
+A1 255,"Moltres ex",☆☆,Charizard,140,Basic,250
+A1 256,"Blastoise ex",☆☆,Pikachu,180,Stage 2,250
+A1 257,"Starmie ex",☆☆,Charizard,130,Stage 1,250
+A1 258,"Articuno ex",☆☆,Mewtwo,140,Basic,250
+A1 259,"Pikachu ex",☆☆,Pikachu,120,Basic,250
+A1 260,"Zapdos ex",☆☆,Pikachu,130,Basic,250
+A1 261,"Gengar ex",☆☆,Mewtwo,170,Stage 2,250
+A1 262,"Mewtwo ex",☆☆,Mewtwo,150,Basic,250
+A1 263,"Machamp ex",☆☆,Charizard,180,Stage 2,250
+A1 264,"Marowak ex",☆☆,Mewtwo,140,Stage 1,250
+A1 265,"Wigglytuff ex",☆☆,Pikachu,140,Stage 1,250
+A1 266,"Erika",☆☆,Charizard,,,250
+A1 267,"Misty",☆☆,Pikachu,,,250
+A1 268,"Blaine",☆☆,Charizard,,,250
+A1 269,"Koga",☆☆,Mewtwo,,,250
+A1 270,"Giovanni",☆☆,Mewtwo,,,250
+A1 271,"Brock",☆☆,Pikachu,,,250
+A1 272,"Sabrina",☆☆,Charizard,,,250
+A1 273,"Lt. Surge",☆☆,Pikachu,,,250
+A1 274,"Moltres ex",☆☆,Charizard,140,Basic,250
+A1 275,"Articuno ex",☆☆,Mewtwo,140,Basic,250
+A1 276,"Zapdos ex",☆☆,Pikachu,130,Basic,250
+A1 277,"Gengar ex",☆☆,Mewtwo,170,Stage 2,250
+A1 278,"Machamp ex",☆☆,Charizard,180,Stage 2,250
+A1 279,"Wigglytuff ex",☆☆,Pikachu,140,Stage 1,250
+A1 280,"Charizard ex",☆☆☆,Charizard,180,Stage 2,500
+A1 281,"Pikachu ex",☆☆☆,Pikachu,120,Basic,500
+A1 282,"Mewtwo ex",☆☆☆,Mewtwo,150,Basic,500
+A1 283,"Mew",☆☆☆,Special,60,Basic,
+A1 284,"Charizard ex",♛,Any,180,Stage 2,500
+A1 285,"Pikachu ex",♛,Any,120,Basic,500
+A1 286,"Mewtwo ex",♛,Any,150,Basic,500

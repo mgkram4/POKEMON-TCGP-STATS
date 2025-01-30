@@ -21,16 +21,6 @@ interface DeckSuggestion {
   typeDistribution: { [key: string]: number };
 }
 
-const getRarityValue = (rarity: string): number => {
-  if (rarity.includes('♛')) return 6;
-  if (rarity.includes('☆☆☆')) return 5;
-  if (rarity.includes('☆☆')) return 4;
-  if (rarity.includes('☆')) return 3;
-  if (rarity.includes('◇◇◇◇')) return 2;
-  if (rarity.includes('◇◇◇')) return 1;
-  return 0;
-};
-
 export default function DeckBuilder() {
   const [selectedCards, setSelectedCards] = useState<Card[]>([]);
   const [suggestions, setSuggestions] = useState<DeckSuggestion[]>([]);
