@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaBolt, FaBrain, FaCrown, FaLeaf } from 'react-icons/fa';
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { ProcessedDeckStats } from './api/meta-data/route';
 import { CustomCard } from './components/card';
 
 // Pokémon TCG Theme Colors matching World Championships
@@ -269,8 +270,8 @@ const PokemonTierDashboard = () => {
           };
           
           // Calculate total games across all decks for meta share calculation
-          const totalGamesAcrossAllDecks = Object.values(data.deckDetails).reduce(
-            (sum, deck: any) => sum + deck.totalGames, 
+          const totalGamesAcrossAllDecks = Object.values(data.deckDetails as Record<string, ProcessedDeckStats>).reduce(
+            (sum: number, deck: ProcessedDeckStats) => sum + deck.totalGames, 
             0
           );
           

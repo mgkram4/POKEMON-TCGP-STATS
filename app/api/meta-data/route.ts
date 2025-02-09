@@ -184,7 +184,7 @@ export async function GET(): Promise<NextResponse<ApiResponse | { error: string 
 
     // Process stats with improved tier calculations
     const processedStats = Array.from(deckStats.entries())
-      .filter(([_, stats]) => stats.totalGames >= 50) // Filter out decks with too few games
+      .filter(([, stats]) => stats.totalGames >= 50) // Filter out decks with too few games
       .map(([deck, stats]) => {
         const winRate = ((stats.wins / (stats.totalGames - stats.ties)) * 100) || 0;
         const metaShare = (stats.totalGames / Array.from(deckStats.values())
