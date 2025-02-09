@@ -69,7 +69,7 @@ const MetaTrendsPage = () => {
           const deckStats = allDecks.find(d => d.deck === deck)!;
           const baseWinRate = parseFloat(deckStats.winRate);
           const baseMetaShare = parseFloat(deckStats.metaShare);
-          const baseTotalGames = deckStats.totalGames / 3; // Divide total games across weeks
+          const baseTotalGames = deckStats.totalGames; // Use the actual total games
 
           dates.forEach((date, i) => {
             // Add some variance to create trends
@@ -79,7 +79,7 @@ const MetaTrendsPage = () => {
               deck,
               winRate: baseWinRate * variance,
               metaShare: baseMetaShare * variance,
-              totalGames: Math.round(baseTotalGames * variance)
+              totalGames: Math.round(baseTotalGames) // Use the full total, no division
             });
           });
         });

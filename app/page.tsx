@@ -268,10 +268,20 @@ const PokemonTierDashboard = () => {
             S: [], A: [], B: [], C: [], D: [], F: []
           };
           
+          // Calculate total games across all decks for meta share calculation
+          const totalGamesAcrossAllDecks = Object.values(data.deckDetails).reduce(
+            (sum, deck: any) => sum + deck.totalGames, 
+            0
+          );
+          
           Object.entries(data.deckDetails).forEach(([deckName, deckStats]) => {
+            const stats = deckStats as DeckStats;
+            // Update meta share calculation based on total games
+            stats.metaShare = ((stats.totalGames / totalGamesAcrossAllDecks) * 100).toFixed(1);
+            
             const deckInsights = data.insights[deckName] as { tier: unknown };
             if (deckInsights && isTierType(deckInsights.tier)) {
-              organizedTiers[deckInsights.tier].push(deckStats as DeckStats);
+              organizedTiers[deckInsights.tier].push(stats);
             }
           });
           

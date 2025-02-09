@@ -105,79 +105,100 @@ export type TierType = 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
 export async function GET(): Promise<NextResponse<ApiResponse | { error: string }>> {
   try {
     // Read the CSV file
-    const filePath = path.join(process.cwd(), 'trainerhill-meta-matchups-2025-01-27.csv');
+    const filePath = path.join(process.cwd(), 'data.csv');
     const fileContent = fs.readFileSync(filePath, 'utf-8');
 
-    // Parse CSV
+    // Parse CSV with improved error handling
     const { data } = parse<CSVRow>(fileContent, {
       header: true,
       skipEmptyLines: true,
-      dynamicTyping: true
+      dynamicTyping: true,
+      transform: (value, field) => {
+        if (field === 'win_rate' && typeof value === 'string') {
+          return parseFloat(value) || 0;
+        }
+        return value;
+      }
     });
 
-    // Calculate deck statistics
+    // Calculate deck statistics with improved accuracy
     const deckStats = new Map<string, DeckStatsMap>();
+    const matchupStats = new Map<string, Map<string, { wins: number, total: number }>>();
 
-    // Process each row
+    // Process each row with better matchup tracking
     data.forEach((row: CSVRow) => {
-      // Process deck1
-      if (!deckStats.has(row.deck1)) {
-        deckStats.set(row.deck1, {
-          totalGames: 0,
-          wins: 0,
-          losses: 0,
-          ties: 0,
-          favorableMatchups: 0
-        });
-      }
+      if (!row.total || row.total < 10) return; // Skip matchups with too few games
+
+      // Initialize stats for both decks
+      [row.deck1, row.deck2].forEach(deck => {
+        if (!deckStats.has(deck)) {
+          deckStats.set(deck, {
+            totalGames: 0,
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            favorableMatchups: 0
+          });
+        }
+        if (!matchupStats.has(deck)) {
+          matchupStats.set(deck, new Map());
+        }
+      });
+
+      // Update matchup stats
+      const deck1Stats = matchupStats.get(row.deck1)!;
+      deck1Stats.set(row.deck2, {
+        wins: row.wins,
+        total: row.total
+      });
+
+      // Update deck stats
       const stats1 = deckStats.get(row.deck1)!;
-      stats1.totalGames += row.total;
-      stats1.wins += row.wins;
-      stats1.losses += row.losses;
-      stats1.ties += row.ties;
-      if (row.win_rate > 50) {
-        stats1.favorableMatchups++;
+      const stats2 = deckStats.get(row.deck2)!;
+
+      if (row.deck1 === row.deck2) {
+        // Mirror match handling
+        stats1.totalGames += row.total;
+        stats1.wins += row.wins;
+        stats1.losses += row.losses;
+        stats1.ties += row.ties;
+      } else {
+        // Regular matchup handling
+        stats1.totalGames += Math.floor(row.total / 2);
+        stats2.totalGames += Math.floor(row.total / 2);
+        stats1.wins += Math.floor(row.wins / 2);
+        stats1.losses += Math.floor(row.losses / 2);
+        stats2.wins += Math.floor(row.losses / 2);
+        stats2.losses += Math.floor(row.wins / 2);
+        stats1.ties += Math.floor(row.ties / 2);
+        stats2.ties += Math.floor(row.ties / 2);
       }
 
-      // Process deck2
-      if (!deckStats.has(row.deck2)) {
-        deckStats.set(row.deck2, {
-          totalGames: 0,
-          wins: 0,
-          losses: 0,
-          ties: 0,
-          favorableMatchups: 0
-        });
-      }
-      const stats2 = deckStats.get(row.deck2)!;
-      stats2.totalGames += row.total;
-      stats2.wins += row.losses; // Note: wins/losses are swapped for deck2
-      stats2.losses += row.wins;
-      stats2.ties += row.ties;
-      if (row.win_rate < 50) {
+      // Update favorable matchups
+      if (row.win_rate > 52) { // Adjusted threshold for favorable matchups
+        stats1.favorableMatchups++;
+      } else if (row.win_rate < 48) {
         stats2.favorableMatchups++;
       }
     });
 
-    // Calculate total games for meta share calculation
-    const totalGames = Array.from(deckStats.values())
-      .reduce((sum, stats) => sum + stats.totalGames, 0) / 2;
-
-    // Process stats and assign tiers
-    const processedStats: ProcessedDeckStats[] = Array.from(deckStats.entries()).map(([deck, stats]) => {
-      const winRate = (stats.wins / (stats.totalGames - stats.ties)) * 100;
-      const metaShare = (stats.totalGames / totalGames) * 100;
-      const performanceScore = winRate * 0.4 + metaShare * 0.4 + stats.favorableMatchups * 2;
-
-      return {
-        deck,
-        winRate: winRate.toFixed(1),
-        metaShare: metaShare.toFixed(1),
-        totalGames: stats.totalGames,
-        favorableMatchups: stats.favorableMatchups,
-        performanceScore: performanceScore.toFixed(1)
-      };
-    });
+    // Process stats with improved tier calculations
+    const processedStats = Array.from(deckStats.entries())
+      .filter(([_, stats]) => stats.totalGames >= 50) // Filter out decks with too few games
+      .map(([deck, stats]) => {
+        const winRate = ((stats.wins / (stats.totalGames - stats.ties)) * 100) || 0;
+        const metaShare = (stats.totalGames / Array.from(deckStats.values())
+          .reduce((sum, s) => sum + s.totalGames, 0)) * 100;
+        
+        return {
+          deck,
+          winRate: winRate.toFixed(1),
+          metaShare: metaShare.toFixed(1),
+          totalGames: stats.totalGames,
+          favorableMatchups: stats.favorableMatchups,
+          performanceScore: (winRate * 0.5 + metaShare * 0.3 + stats.favorableMatchups * 2).toFixed(1)
+        };
+      });
 
     // Sort by performance score
     const sortedStats = processedStats.sort((a, b) => 
