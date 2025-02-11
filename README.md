@@ -1,37 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TCG Pocket - Pokemon Trading Card Game Meta Analysis Dashboard
 
-## Getting Started
+## Overview
+TCG Pocket is a comprehensive web application for tracking and analyzing the Pokemon Trading Card Game competitive meta. The dashboard provides real-time statistics, tier rankings, and detailed analytics for different deck archetypes in the current competitive environment.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Live Meta Analysis
+- Real-time updates of competitive deck statistics
+- Tier-based classification system (S through F tiers)
+- Comprehensive win rate and meta share tracking
+- Performance scoring for each deck archetype
+
+### Interactive Dashboard Components
+- **Stats Overview Cards**
+  - Total Games Tracked
+  - Average Win Rate
+  - Top Performing Deck
+  - Meta Diversity Statistics
+
+### Visualization Features
+- Interactive tier list with detailed deck statistics
+- Win rate distribution charts
+- Meta share analysis graphs
+- Pokemon sprite integration with PokeAPI
+
+### Deck Details
+Each deck entry includes:
+- Win rate percentage
+- Meta share percentage
+- Total games played
+- Number of favorable matchups
+- Performance score
+- Visual representation with corresponding Pokemon sprites
+
+## Technical Implementation
+
+### Core Technologies
+- Next.js (React Framework)
+- TypeScript
+- Tailwind CSS
+- Framer Motion for animations
+- Recharts for data visualization
+
+### API Integrations
+- PokeAPI for Pokemon sprites and data
+- Internal API endpoints for meta statistics
+  - `/api/meta-data` for deck statistics
+  - Dynamic routing for individual deck pages
+
+### Design System
+#### Color Scheme
+World Championships-inspired color palette:
+- S Tier: #E3350D (Championship Red)
+- A Tier: #0055B7 (Championship Blue)
+- B Tier: #00A058 (Championship Green)
+- C Tier: #FDD23C (Championship Yellow)
+- D Tier: #A65D9E (Purple)
+- F Tier: #919191 (Silver)
+
+### Key Components
+1. **TierCard**
+   - Individual deck display
+   - Pokemon sprite integration
+   - Interactive hover effects
+   - Dynamic stat display
+
+2. **TierList**
+   - Grouped deck displays by tier
+   - Responsive grid layout
+   - Animated transitions
+
+3. **CustomCard**
+   - Reusable component for stat displays
+   - Gradient backgrounds
+   - Icon integration
+
+4. **Charts**
+   - Win rate distribution
+   - Meta share analysis
+   - Interactive tooltips
+   - Responsive design
+
+## Performance Optimizations
+- Image optimization with Next.js Image component
+- Lazy loading of Pokemon sprites
+- Responsive design for all screen sizes
+- Loading skeleton states for better UX
+- Client-side data caching
+
+## Usage
+The dashboard automatically updates with the latest meta statistics. Users can:
+1. View overall meta statistics
+2. Browse deck tiers
+3. Analyze individual deck performance
+4. Track meta trends through interactive charts
+5. Access detailed deck information through dynamic routing
+
+## Data Structure
+```typescript
+interface DeckStats {
+  deck: string;
+  winRate: string;
+  metaShare: string;
+  totalGames: number;
+  favorableMatchups: number;
+  performanceScore: string;
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Contributing
+The project uses TypeScript for type safety and maintainability. All contributions should follow the established type system and component structure.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# POKEMON-TCGP-STATS
+## License
+© 2025 Pokemon TCG World Championships. All Pokemon-related content belongs to Nintendo & The Pokemon Company.
